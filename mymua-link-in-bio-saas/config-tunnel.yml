@@ -1,0 +1,10 @@
+# Managed tunnel — remote config from Cloudflare dashboard takes precedence
+# Local ingress rules only apply if no remote config exists
+# Add `*.mymua.in` route in Cloudflare dashboard for wildcard subdomain support
+token: ${TUNNEL_TOKEN}
+ingress:
+  - hostname: mymua.in
+    service: http://localhost:3000
+  - hostname: "*.mymua.in"
+    service: http://localhost:3000
+  - service: http_status:404

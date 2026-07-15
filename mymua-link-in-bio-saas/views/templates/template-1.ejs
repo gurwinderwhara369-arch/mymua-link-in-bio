@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" data-theme="sunset">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0c0d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="<%= user.bio ? user.bio.slice(0, 160) : 'Bridal makeup artist' %>" />
+    <meta name="format-detection" content="telephone=yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+    <title><%= user.name %> — Bridal Makeup Artist</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="bg-base-300 text-base-content min-h-dvh overflow-x-hidden">
+    <div class="bg-noise"></div>
+
+    <a href="https://wa.me/<%= user.social.whatsapp || '919999999999' %>?text=Hi%20<%= encodeURIComponent(user.name) %>%21%20I'd%20love%20to%20inquire%20about%20bridal%20makeup%20services." target="_blank" rel="noopener noreferrer"
+       class="fab" aria-label="Chat on WhatsApp">
+      <div class="pulse-ring"></div>
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span class="fab-tooltip">Chat on WhatsApp</span>
+    </a>
+
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 safe-top"
+            style="background: color-mix(in oklab, var(--color-base-300) 65%, transparent); backdrop-filter: blur(20px); border-bottom: 0px solid color-mix(in oklab, var(--color-base-content) 6%, transparent);">
+      <div class="max-w-[480px] mx-auto flex items-center justify-between h-14 px-4">
+        <span class="text-sm font-bold tracking-[0.15em] uppercase"><span class="gradient-text"><%= user.name %> ✦</span></span>
+        <nav class="flex items-center gap-1" aria-label="Quick navigation">
+          <a href="#gallery" class="btn btn-ghost btn-xs font-medium text-xs tracking-wider text-base-content/50 hover:text-base-content font-body-sans">Gallery</a>
+          <a href="#services" class="btn btn-ghost btn-xs font-medium text-xs tracking-wider text-base-content/50 hover:text-base-content font-body-sans">Services</a>
+          <a href="#testimonials" class="btn btn-ghost btn-xs font-medium text-xs tracking-wider text-base-content/50 hover:text-base-content font-body-sans">Reviews</a>
+          <a href="#contact" class="btn btn-ghost btn-xs font-medium text-xs tracking-wider text-primary font-semibold font-body-sans">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="flex flex-col min-h-dvh max-w-[480px] mx-auto relative">
+
+      <!-- ====== HERO ====== -->
+      <section id="hero" class="relative pt-20 pb-10 px-4 overflow-hidden">
+        <div class="ambient-blobs" aria-hidden="true">
+          <div class="ambient-blob blob-1"></div>
+          <div class="ambient-blob blob-2"></div>
+          <div class="ambient-blob blob-3"></div>
+        </div>
+        <div class="relative z-10 flex flex-col items-center text-center gap-4" data-reveal="fade-in-up">
+          <div class="avatar">
+            <div class="w-28 h-28 rounded-full ring ring-primary ring-offset-2 ring-offset-base-300 overflow-hidden">
+              <img src="<%= user.photo || 'https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=200&q=80' %>" alt="<%= user.name %>" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <h1 class="text-fluid-3xl font-bold font-serif tracking-tight leading-[1.1]"><span class="gradient-text"><%= user.name %></span></h1>
+            <p class="text-fluid-sm text-base-content/50 font-body-sans"><%= user.title %></p>
+          </div>
+          <% if (user.location) { %><p class="text-fluid-xs text-base-content/30 font-body-sans flex items-center gap-1">📍 <%= user.location %></p><% } %>
+          <p class="text-fluid-xs text-base-content/40 font-body-sans max-w-xs text-balance leading-relaxed"><%= user.bio %></p>
+          <div class="flex gap-3 mt-2">
+            <a href="#contact" class="btn btn-primary btn-sm font-body-sans text-xs tracking-wider uppercase rounded-full px-6">Book Now</a>
+            <a href="#gallery" class="btn btn-outline btn-sm font-body-sans text-xs tracking-wider uppercase rounded-full px-6 border-base-content/20 text-base-content/60 hover:text-base-content">Portfolio</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== ABOUT ====== -->
+      <section id="about" class="px-4 py-8">
+        <div class="floral-divider px-8 py-4"><svg class="w-6 h-6 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+        <div class="flex flex-col gap-3 text-center max-w-md mx-auto" data-reveal>
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">About</span>
+            <div class="w-8 h-px bg-gradient-to-l from-primary/60 to-transparent"></div>
+          </div>
+          <h2 class="text-fluid-2xl font-bold font-serif tracking-tight leading-[1.1] text-balance"><%= user.name %></h2>
+          <p class="text-fluid-xs text-base-content/40 leading-relaxed font-body-sans text-balance"><%= user.bio %></p>
+          <% if (user.location) { %><p class="text-fluid-xs text-base-content/30 font-body-sans mt-2">📍 Based in <%= user.location %></p><% } %>
+        </div>
+      </section>
+
+      <!-- ====== GALLERY ====== -->
+      <section id="gallery" class="px-4 py-8">
+        <div class="flex flex-col gap-3 text-center" data-reveal>
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">Gallery</span>
+            <div class="w-8 h-px bg-gradient-to-l from-primary/60 to-transparent"></div>
+          </div>
+          <h2 class="text-fluid-2xl font-bold font-serif tracking-tight leading-[1.1]">My Work</h2>
+        </div>
+        <% if (user.gallery && user.gallery.length) { %>
+        <div id="gallery-grid" class="grid grid-cols-2 gap-3 mt-6" data-reveal-stagger>
+          <% user.gallery.forEach(function(img, i) { %>
+          <div class="gallery-item <%= i === 0 ? 'col-span-2' : '' %> rounded-2xl overflow-hidden bg-base-200 cursor-pointer" data-src="<%= img.url %>" data-alt="<%= img.alt || 'Bridal makeup' %>">
+            <img src="<%= img.url %>" alt="<%= img.alt || 'Bridal makeup' %>" class="w-full aspect-[4/5] object-cover hover:scale-110 transition-transform duration-700" loading="lazy" />
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="mt-6 p-8 text-center text-base-content/30 text-sm font-body-sans border-2 border-dashed border-base-200 rounded-2xl">No gallery images yet</div>
+        <% } %>
+      </section>
+
+      <!-- ====== TESTIMONIALS ====== -->
+      <section id="testimonials" class="px-4 py-8">
+        <div class="flex flex-col gap-3 text-center" data-reveal>
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">Kind Words</span>
+            <div class="w-8 h-px bg-gradient-to-l from-primary/60 to-transparent"></div>
+          </div>
+          <h2 class="text-fluid-2xl font-bold font-serif tracking-tight leading-[1.1]">What Brides Say</h2>
+        </div>
+        <% if (user.testimonials && user.testimonials.length) { %>
+        <div class="flex flex-col gap-3 mt-6" data-reveal-stagger>
+          <% user.testimonials.forEach(function(t) { %>
+          <div class="testimonial-card p-5 rounded-2xl bg-base-200/50 border border-base-200 hover:border-primary/10 transition-all">
+            <p class="text-fluid-xs text-base-content/50 font-body-sans leading-relaxed italic text-balance">"<%= t.text %>"</p>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold font-body-sans"><%= t.name.charAt(0) %></div>
+              <div><p class="text-fluid-xs font-semibold font-body-sans"><%= t.name %></p><p class="text-[10px] text-base-content/30 font-body-sans"><%= t.event || 'Bride' %></p></div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="mt-6 p-8 text-center text-base-content/30 text-sm font-body-sans border-2 border-dashed border-base-200 rounded-2xl">No testimonials yet</div>
+        <% } %>
+      </section>
+
+      <!-- ====== SERVICES ====== -->
+      <section id="services" class="px-4 py-8">
+        <div class="floral-divider px-8 py-4"><svg class="w-6 h-6 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+        <div class="flex flex-col gap-3 text-center" data-reveal>
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">Services</span>
+            <div class="w-8 h-px bg-gradient-to-l from-primary/60 to-transparent"></div>
+          </div>
+          <h2 class="text-fluid-2xl font-bold font-serif tracking-tight leading-[1.1]">Investment</h2>
+        </div>
+        <% if (user.services && user.services.length) { %>
+        <div class="flex flex-col gap-3 mt-6" data-reveal-stagger>
+          <% user.services.forEach(function(s) { %>
+          <div class="pricing-card p-5 rounded-2xl bg-base-200/30 border border-base-200 hover:border-primary/20 transition-all">
+            <div class="flex items-center justify-between">
+              <div><h3 class="text-fluid-base font-semibold font-body-sans"><%= s.name %></h3><% if (s.desc) { %><p class="text-fluid-xs text-base-content/40 font-body-sans mt-0.5"><%= s.desc %></p><% } %></div>
+              <p class="text-fluid-sm font-bold gradient-text"><%= s.price %></p>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="mt-6 p-8 text-center text-base-content/30 text-sm font-body-sans border-2 border-dashed border-base-200 rounded-2xl">No services added yet</div>
+        <% } %>
+      </section>
+
+      <!-- ====== AVAILABILITY ====== -->
+      <section id="availability" class="px-4 py-8">
+        <div class="flex flex-col gap-3" data-reveal>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">Availability</span>
+          </div>
+          <h2 class="text-fluid-3xl font-bold font-serif tracking-tight leading-[1.1] text-balance">Open Dates</h2>
+          <p class="text-fluid-xs text-base-content/40 leading-relaxed font-body-sans -mt-1 text-balance">Check available dates below</p>
+        </div>
+        <div id="calendar-1" class="mt-6" data-reveal></div>
+        <p class="text-xs text-base-content/30 font-body-sans text-center mt-3">🟢 Available · 🔴 Booked · ⚪ Past</p>
+      </section>
+
+      <!-- ====== CONTACT ====== -->
+      <section id="contact" class="px-4 py-8">
+        <div class="floral-divider px-8 py-4"><svg class="w-6 h-6 text-primary/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+        <div class="flex flex-col gap-3" data-reveal>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-px bg-gradient-to-r from-primary/60 to-transparent"></div>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold font-body-sans">Connect</span>
+          </div>
+          <h2 class="text-fluid-3xl font-bold font-serif tracking-tight leading-[1.1] text-balance">Let's Make Your<br />Dream Look Real</h2>
+        </div>
+
+        <div class="flex flex-col gap-3 mt-6" data-reveal-stagger>
+          <% if (user.social.phone) { %>
+          <a href="tel:<%= user.social.phone %>" class="link-item p-4 rounded-2xl bg-base-200/30 border border-base-200 flex items-center gap-4 hover:border-primary/20 transition-all active:scale-[0.98] transform-gpu">
+            <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-none"><svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg></div>
+            <div class="flex-1 min-w-0"><h3 class="text-fluid-sm font-semibold font-body-sans">Call Now</h3><p class="text-fluid-xs text-base-content/40 font-body-sans">Speak directly with <%= user.name %></p></div>
+            <svg class="w-5 h-5 text-base-content/25 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <% } %>
+
+          <% if (user.social.whatsapp) { %>
+          <details class="group whatsapp-details p-4 rounded-2xl bg-base-200/30 border border-base-200 [&[open]]:border-primary/20 transition-all">
+            <summary class="flex items-center gap-4 cursor-pointer list-none">
+              <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-none"><svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+              <div class="flex-1 min-w-0"><h3 class="text-fluid-sm font-semibold font-body-sans">WhatsApp Inquiry</h3><p class="text-fluid-xs text-base-content/40 font-body-sans">Quick response via WhatsApp</p></div>
+              <svg class="w-5 h-5 text-base-content/25 flex-none group-open:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </summary>
+            <form id="whatsapp-form" class="mt-4 space-y-3 pt-4 border-t border-base-200">
+              <input type="hidden" name="wa_phone" value="<%= user.social.whatsapp %>" />
+              <div class="whatsapp-field">
+                <label class="whatsapp-form-label text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans block mb-1 opacity-50">Your Name</label>
+                <input type="text" id="wa-name" required class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-fluid-xs font-body-sans h-11" placeholder="e.g. Ananya Sharma" />
+              </div>
+              <div class="whatsapp-field">
+                <label class="whatsapp-form-label text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans block mb-1 opacity-50">Phone Number</label>
+                <input type="tel" id="wa-phone" required class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-fluid-xs font-body-sans h-11" placeholder="e.g. +91 98765 43210" />
+              </div>
+              <div class="whatsapp-field">
+                <label class="whatsapp-form-label text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans block mb-1 opacity-50">Inquiry Type</label>
+                <select id="wa-inquiry" class="select select-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-fluid-xs font-body-sans h-11">
+                  <option value="">Select type...</option>
+                  <option>Availability Check</option><option>Booking Inquiry</option><option>Pricing Inquiry</option>
+                </select>
+              </div>
+              <div class="whatsapp-field">
+                <label class="whatsapp-form-label text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans block mb-1 opacity-50">Event Date</label>
+                <input type="date" id="wa-date" class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-fluid-xs font-body-sans h-11" />
+              </div>
+              <div>
+                <p class="text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans mb-2">Services Interested In</p>
+                <div class="flex flex-wrap gap-2">
+                  <% (user.services || []).forEach(function(s) { %>
+                  <span class="service-chip inline-flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs cursor-pointer select-none transition-all" style="border-color: color-mix(in oklab, var(--color-primary) 20%, transparent); color: var(--color-base-content);"><%= s.name %></span>
+                  <% }) %>
+                </div>
+              </div>
+              <div class="whatsapp-field">
+                <label class="whatsapp-form-label text-[10px] tracking-[0.2em] uppercase text-base-content/40 font-semibold font-body-sans block mb-1 opacity-50">Notes</label>
+                <textarea id="wa-notes" rows="2" class="textarea textarea-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-fluid-xs font-body-sans resize-none" placeholder="Any specific requests..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-full font-body-sans text-fluid-xs tracking-wider uppercase h-11">Send via WhatsApp</button>
+            </form>
+          </details>
+          <% } %>
+
+          <% if (user.social.instagram) { %>
+          <a href="https://instagram.com/<%= user.social.instagram %>" target="_blank" rel="noopener noreferrer" class="link-item p-4 rounded-2xl bg-base-200/30 border border-base-200 flex items-center gap-4 hover:border-primary/20 transition-all active:scale-[0.98] transform-gpu">
+            <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-none"><svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.11 2.525c.636-.247 1.363-.416 2.427-.465C8.83 2.013 9.075 2 12.315 2z"/></svg></div>
+            <div class="flex-1 min-w-0"><h3 class="text-fluid-sm font-semibold font-body-sans">Instagram</h3><p class="text-fluid-xs text-base-content/40 font-body-sans">@<%= user.social.instagram %></p></div>
+            <svg class="w-5 h-5 text-base-content/25 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <% } %>
+
+          <% if (user.social.email) { %>
+          <a href="mailto:<%= user.social.email %>" class="link-item p-4 rounded-2xl bg-base-200/30 border border-base-200 flex items-center gap-4 hover:border-primary/20 transition-all active:scale-[0.98] transform-gpu">
+            <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-none"><svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+            <div class="flex-1 min-w-0"><h3 class="text-fluid-sm font-semibold font-body-sans">Email</h3><p class="text-fluid-xs text-base-content/40 font-body-sans"><%= user.social.email %></p></div>
+            <svg class="w-5 h-5 text-base-content/25 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- ====== BOOKING FORM ====== -->
+      <section id="booking" class="px-4 py-8" style="background: color-mix(in oklab, var(--color-primary) 4%, transparent);">
+        <div class="max-w-[480px] mx-auto">
+          <div data-reveal>
+            <p class="text-xs tracking-[0.25em] uppercase text-primary font-body-sans font-medium">Book Now</p>
+            <h3 class="text-2xl font-bold font-heading mt-2 gradient-text">Reserve Your Date</h3>
+          </div>
+          <% if (bookingStatus === 'success') { %>
+          <div class="mt-6 p-4 bg-success/10 border border-success/30 rounded-lg text-center" data-reveal>
+            <p class="text-success font-medium font-body-sans">✓ Booking request sent!</p>
+            <p class="text-xs text-base-content/50 font-body-sans mt-1">The artist will contact you soon.</p>
+          </div>
+          <% } else if (bookingStatus && bookingStatus.startsWith('error')) { %>
+          <div class="mt-6 p-4 bg-error/10 border border-error/30 rounded-lg text-center" data-reveal>
+            <p class="text-error font-medium font-body-sans">✗ <%= bookingStatus.replace('error=', '') %></p>
+          </div>
+          <% } %>
+          <form action="/booking/<%= username %>" method="POST" class="mt-6 space-y-4" data-reveal>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <div class="form-control">
+              <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Full Name <span class="text-primary">*</span></span></label>
+              <input type="text" name="name" required class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="e.g. Ananya Sharma" />
+            </div>
+            <div class="form-control">
+              <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Phone <span class="text-primary">*</span></span></label>
+              <input type="tel" name="phone" required class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="+91 98765 43210" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="form-control">
+                <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Location</span></label>
+                <input type="text" name="location" class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="City" />
+              </div>
+              <div class="form-control">
+                <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Service</span></label>
+                <select name="service" class="select select-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans">
+                  <option value="">Select...</option>
+                  <% (user.services || []).forEach(function(s) { %>
+                  <option value="<%= s.name %>"><%= s.name %> — <%= s.price %></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="form-control">
+                <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Guests</span></label>
+                <input type="number" name="guests" min="1" class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="50" />
+              </div>
+              <div class="form-control">
+                <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Date</span></label>
+                <input type="date" name="event_date" class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" />
+              </div>
+            </div>
+            <div class="form-control">
+              <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Travel Required?</span></label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="travel" value="yes" class="radio radio-primary radio-sm" /><span class="text-sm font-body-sans text-base-content/70">Yes</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="travel" value="no" checked class="radio radio-primary radio-sm" /><span class="text-sm font-body-sans text-base-content/70">No</span></label>
+              </div>
+            </div>
+            <div class="form-control travel-destination" style="display:none;">
+              <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Destination</span></label>
+              <input type="text" name="destination" class="input input-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="e.g. Udaipur" />
+            </div>
+            <div class="form-control">
+              <label class="label px-0 pb-1"><span class="label-text font-body-sans text-xs tracking-wider uppercase text-base-content/60">Notes</span></label>
+              <textarea name="notes" rows="2" class="textarea textarea-bordered w-full bg-base-300/50 border-base-content/15 focus:border-primary text-sm font-body-sans" placeholder="Any requests..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full font-body-sans tracking-wider uppercase text-sm">Send Booking Request</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="mt-auto px-4 py-10 text-center safe-bottom">
+      <div class="max-w-[480px] mx-auto flex flex-col items-center gap-4">
+        <div class="floral-divider w-full"><svg class="w-5 h-5 text-primary/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+        <p class="text-fluid-xs font-bold tracking-[0.15em] uppercase gradient-text"><%= user.name %></p>
+        <p class="text-[10px] text-base-content/25 font-body-sans tracking-[0.2em] uppercase"><%= user.title %></p>
+        <p class="text-[10px] text-base-content/15 tracking-wider">© 2026 <%= user.name %></p>
+      </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>

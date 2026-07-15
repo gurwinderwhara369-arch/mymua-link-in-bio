@@ -1,0 +1,31 @@
+<% let path = '/dashboard/testimonials' %>
+<%- include('../partials/dash-head', { path }) %>
+      <h1 class="text-xl font-bold mb-6">Testimonials</h1>
+      <% if (error) { %><div class="mb-4 p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg"><%= error %></div><% } %>
+
+      <div class="space-y-3 mb-8">
+        <% (content.testimonials || []).forEach(function(t, i) { %>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+          <div class="flex items-start justify-between">
+            <div><h3 class="font-medium"><%= t.name %></h3><p class="text-xs text-zinc-500"><%= t.event %></p></div>
+            <form method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="action" value="delete"><input type="hidden" name="index" value="<%= i %>"><button class="text-xs text-red-500 hover:text-red-400">Delete</button></form>
+          </div>
+          <p class="text-sm text-zinc-400 mt-2 italic">"<%= t.text %>"</p>
+        </div>
+        <% }) %>
+      </div>
+
+      <details class="bg-zinc-900 border border-zinc-800 rounded-xl">
+        <summary class="px-6 py-4 cursor-pointer text-sm font-medium hover:text-zinc-300">Add Testimonial</summary>
+        <div class="px-6 pb-6">
+          <form method="POST" class="space-y-3 mt-4">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="action" value="add">
+            <input type="text" name="name" placeholder="Client name" class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm" required>
+            <textarea name="text" rows="3" placeholder="What they said..." class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm" required></textarea>
+            <input type="text" name="event" placeholder="Event type (e.g. Wedding)" class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm">
+            <button type="submit" class="px-4 py-2 bg-zinc-100 text-zinc-900 rounded-lg text-sm font-medium">Add</button>
+          </form>
+        </div>
+      </details>
+<%- include('../partials/dash-foot') %>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Mymua</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>input,select,textarea{font-size:16px!important}</style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-dvh p-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold">Admin</h1>
+        <p class="text-zinc-500 text-sm mt-1">You're logged in as admin</p>
+      </div>
+      <a href="/dashboard" class="text-sm text-zinc-400 hover:text-zinc-300 underline">My Dashboard</a>
+    </div>
+
+    <% if (msg) { %><div class="mb-4 p-3 bg-zinc-800 text-zinc-300 text-sm rounded-lg"><%= msg %></div><% } %>
+
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <p class="text-zinc-500 text-xs uppercase tracking-wider">Total Users</p>
+        <p class="text-2xl font-bold mt-1"><%= totalUsers %></p>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <p class="text-zinc-500 text-xs uppercase tracking-wider">Total Bookings</p>
+        <p class="text-2xl font-bold mt-1"><%= totalBookings %></p>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <p class="text-zinc-500 text-xs uppercase tracking-wider">Active MUAs (have bookings)</p>
+        <p class="text-2xl font-bold mt-1"><%= usersWithBooking %></p>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <p class="text-zinc-500 text-xs uppercase tracking-wider">Templates Used</p>
+        <div class="mt-1 text-sm space-y-1">
+          <% templateStats.forEach(function(t) { %>
+          <p>Template <%= t.template_id %>: <span class="font-bold"><%= t.c %></span></p>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+      <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
+        <h2 class="font-semibold">All Users</h2>
+        <span class="text-xs text-zinc-500"><%= totalUsers %> total</span>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-zinc-500 text-xs uppercase tracking-wider border-b border-zinc-800">
+            <th class="text-left p-3 font-medium">Username</th>
+            <th class="text-left p-3 font-medium">Email</th>
+            <th class="text-left p-3 font-medium">Template</th>
+            <th class="text-left p-3 font-medium">Admin</th>
+            <th class="text-left p-3 font-medium">Created</th>
+            <th class="text-right p-3 font-medium"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(function(u) { %>
+          <tr class="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+            <td class="p-3"><%= u.username %></td>
+            <td class="p-3 text-zinc-400"><%= u.email %></td>
+            <td class="p-3"><%= u.template_id %></td>
+            <td class="p-3"><%= u.is_admin ? 'Yes' : '—' %></td>
+            <td class="p-3 text-zinc-500"><%= u.created_at %></td>
+            <td class="p-3 text-right">
+              <a href="/admin/user/<%= u.id %>" class="text-zinc-400 hover:text-zinc-200 underline text-xs">View</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

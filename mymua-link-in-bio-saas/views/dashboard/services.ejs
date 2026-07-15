@@ -1,0 +1,37 @@
+<% let path = '/dashboard/services' %>
+<%- include('../partials/dash-head', { path }) %>
+      <h1 class="text-xl font-bold mb-6">Services</h1>
+      <% if (error) { %><div class="mb-4 p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg"><%= error %></div><% } %>
+
+      <div class="space-y-3 mb-8">
+        <% (content.services || []).forEach(function(s, i) { %>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
+          <div><h3 class="font-medium"><%= s.name %></h3><p class="text-sm text-zinc-500"><%= s.price %><% if (s.desc) { %> — <%= s.desc %><% } %></p></div>
+          <div class="flex gap-2">
+            <button onclick="editService(<%= i %>)" class="text-xs text-zinc-500 hover:text-zinc-300">Edit</button>
+            <form method="POST" class="inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="action" value="delete"><input type="hidden" name="index" value="<%= i %>"><button class="text-xs text-red-500 hover:text-red-400">Delete</button></form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+      <details class="bg-zinc-900 border border-zinc-800 rounded-xl">
+        <summary class="px-6 py-4 cursor-pointer text-sm font-medium hover:text-zinc-300">Add Service</summary>
+        <div class="px-6 pb-6">
+          <form method="POST" class="space-y-3 mt-4">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="action" value="add">
+            <div class="grid grid-cols-3 gap-3">
+              <input type="text" name="name" placeholder="Service name" class="px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm" required>
+              <input type="text" name="price" placeholder="e.g. ₹15,000+" class="px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm" required>
+              <input type="text" name="desc" placeholder="Short description" class="px-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm">
+            </div>
+            <button type="submit" class="px-4 py-2 bg-zinc-100 text-zinc-900 rounded-lg text-sm font-medium">Add</button>
+          </form>
+        </div>
+      </details>
+
+      <script>
+      function editService(i) { alert('Edit functionality: modify directly in the Add form and we\'ll add edit inline support soon. For now, delete and re-add.'); }
+      </script>
+<%- include('../partials/dash-foot') %>

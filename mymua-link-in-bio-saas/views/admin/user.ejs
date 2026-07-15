@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User <%= user.username %> — Admin — Mymua</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>input,select,textarea{font-size:16px!important}</style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-dvh p-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <a href="/admin" class="text-xs text-zinc-500 hover:text-zinc-400 underline">&larr; Back to all users</a>
+        <h1 class="text-2xl font-bold mt-1"><%= user.username %></h1>
+        <p class="text-zinc-500 text-sm"><%= user.email %> · Template <%= user.template_id %> · <%= user.is_admin ? 'Admin' : 'MUA' %></p>
+      </div>
+      <form method="POST" action="/admin/user/<%= user.id %>/toggle-admin">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="text-xs px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300"><%= user.is_admin ? 'Remove Admin' : 'Make Admin' %></button>
+      </form>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <h2 class="font-semibold mb-3">Profile</h2>
+        <div class="space-y-2 text-sm">
+          <p><span class="text-zinc-500">Name:</span> <%= content.name || '—' %></p>
+          <p><span class="text-zinc-500">Title:</span> <%= content.title || '—' %></p>
+          <p><span class="text-zinc-500">Location:</span> <%= content.location || '—' %></p>
+          <p><span class="text-zinc-500">Phone:</span> <%= content.social?.phone || '—' %></p>
+          <p><span class="text-zinc-500">WhatsApp:</span> <%= content.social?.whatsapp || '—' %></p>
+          <p><span class="text-zinc-500">Instagram:</span> <%= content.social?.instagram || '—' %></p>
+          <p><span class="text-zinc-500">Email:</span> <%= content.social?.email || '—' %></p>
+          <p><span class="text-zinc-500">Services:</span> <%= (content.services || []).length %></p>
+          <p><span class="text-zinc-500">Gallery:</span> <%= (content.gallery || []).length %> images</p>
+          <p><span class="text-zinc-500">Testimonials:</span> <%= (content.testimonials || []).length %></p>
+        </div>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <h2 class="font-semibold mb-3">Bookings (<%= bookings.length %>)</h2>
+        <% if (!bookings.length) { %>
+        <p class="text-zinc-500 text-sm">No bookings yet.</p>
+        <% } else { %>
+        <div class="space-y-3 max-h-96 overflow-y-auto">
+          <% bookings.forEach(function(b) { %>
+          <div class="bg-zinc-800/50 rounded-lg p-3 text-sm">
+            <div class="flex items-center justify-between">
+              <span class="font-medium"><%= b.data.name %></span>
+              <span class="text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-400"><%= b.status %></span>
+            </div>
+            <p class="text-zinc-400 text-xs mt-1"><%= b.data.phone %><% if (b.data.email) { %> · <%= b.data.email %><% } %></p>
+            <% if (b.data.service) { %><p class="text-zinc-500 text-xs"><%= b.data.service %></p><% } %>
+            <p class="text-zinc-600 text-xs mt-1"><%= b.created_at %></p>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

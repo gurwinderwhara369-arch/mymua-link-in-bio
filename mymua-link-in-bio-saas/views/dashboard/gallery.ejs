@@ -1,0 +1,28 @@
+<% let path = '/dashboard/gallery' %>
+<%- include('../partials/dash-head', { path }) %>
+      <h1 class="text-xl font-bold mb-6">Gallery</h1>
+      <% if (error) { %><div class="mb-4 p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg"><%= error %></div><% } %>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <% (content.gallery || []).forEach(function(img, i) { %>
+        <div class="relative group aspect-[3/4] bg-zinc-900 rounded-xl overflow-hidden">
+          <img src="<%= img.url %>" alt="<%= img.alt %>" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <form method="POST" action="/dashboard/gallery/delete"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="index" value="<%= i %>"><button class="text-xs text-red-400 bg-black/60 px-3 py-1.5 rounded-lg">Delete</button></form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+      <details class="bg-zinc-900 border border-zinc-800 rounded-xl">
+        <summary class="px-6 py-4 cursor-pointer text-sm font-medium hover:text-zinc-300">Upload Images</summary>
+        <div class="px-6 pb-6">
+          <form method="POST" action="/dashboard/gallery/upload" enctype="multipart/form-data" class="space-y-3 mt-4">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp" class="text-sm text-zinc-400">
+            <p class="text-xs text-zinc-600">Max 5MB per image. JPEG, PNG, WebP only.</p>
+            <button type="submit" class="px-4 py-2 bg-zinc-100 text-zinc-900 rounded-lg text-sm font-medium">Upload</button>
+          </form>
+        </div>
+      </details>
+<%- include('../partials/dash-foot') %>

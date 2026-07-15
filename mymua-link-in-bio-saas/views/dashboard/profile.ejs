@@ -1,0 +1,32 @@
+<% let path = '/dashboard/profile' %>
+<%- include('../partials/dash-head', { path }) %>
+      <h1 class="text-xl font-bold mb-6">Profile</h1>
+      <% if (error) { %><div class="mb-4 p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg"><%= error %></div><% } %>
+      <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Name</label>
+            <input type="text" name="name" value="<%= content.name %>" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:outline-none focus:border-zinc-600">
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Title</label>
+            <input type="text" name="title" value="<%= content.title %>" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:outline-none focus:border-zinc-600">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Bio</label>
+          <textarea name="bio" rows="3" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-sm focus:outline-none focus:border-zinc-600"><%= content.bio %></textarea>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Location</label>
+          <input type="text" name="location" value="<%= content.location %>" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-lg text-sm" placeholder="e.g. Mumbai, Maharashtra">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Profile Photo</label>
+          <% if (content.photo) { %><img src="<%= content.photo %>" class="w-20 h-20 object-cover rounded-full mb-2"><% } %>
+          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" class="text-sm text-zinc-400">
+        </div>
+        <button type="submit" class="px-6 py-2.5 bg-zinc-100 text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-200">Save</button>
+      </form>
+<%- include('../partials/dash-foot') %>

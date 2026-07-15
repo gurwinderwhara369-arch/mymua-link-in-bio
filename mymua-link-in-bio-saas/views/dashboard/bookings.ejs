@@ -1,0 +1,35 @@
+<% let path = '/dashboard/bookings' %>
+<%- include('../partials/dash-head', { path }) %>
+      <h1 class="text-xl font-bold mb-6">Bookings</h1>
+
+      <% if (!bookings.length) { %>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+        <p class="text-zinc-500">No booking requests yet.</p>
+        <p class="text-zinc-600 text-sm mt-1">Share your page and brides will book you here.</p>
+      </div>
+      <% } else { %>
+      <div class="space-y-3">
+        <% bookings.forEach(function(b) { %>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold"><%= b.data.name %></h3>
+              <p class="text-sm text-zinc-400"><%= b.data.phone %></p>
+            </div>
+            <span class="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded uppercase"><%= b.status %></span>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-2 text-sm text-zinc-500">
+            <% if (b.data.email) { %><div><span class="text-zinc-600">Email:</span> <%= b.data.email %></div><% } %>
+            <% if (b.data.location) { %><div><span class="text-zinc-600">Location:</span> <%= b.data.location %></div><% } %>
+            <% if (b.data.service) { %><div><span class="text-zinc-600">Service:</span> <%= b.data.service %></div><% } %>
+            <% if (b.data.event_date) { %><div><span class="text-zinc-600">Date:</span> <%= b.data.event_date %></div><% } %>
+            <% if (b.data.guests) { %><div><span class="text-zinc-600">Guests:</span> <%= b.data.guests %></div><% } %>
+            <% if (b.data.travel) { %><div><span class="text-zinc-600">Travel:</span> <%= b.data.travel %><% if (b.data.destination) { %> to <%= b.data.destination %><% } %></div><% } %>
+          </div>
+          <% if (b.data.notes) { %><p class="mt-2 text-sm text-zinc-500 italic">"<%= b.data.notes %>"</p><% } %>
+          <p class="mt-2 text-xs text-zinc-600"><%= b.created_at %></p>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+<%- include('../partials/dash-foot') %>
