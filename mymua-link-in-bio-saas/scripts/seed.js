@@ -144,8 +144,9 @@ const tx = db.transaction(() => {
   for (const d of demoData) {
     const existing = checkUser.get(d.username);
     if (existing) {
-      console.log(`User "${d.username}" already exists, updating content`);
+      console.log(`User "${d.username}" already exists, updating content & template`);
       insertContent.run(existing.id, JSON.stringify(d.content));
+      db.prepare('UPDATE users SET template_id = ? WHERE id = ?').run(d.template_id, existing.id);
     } else {
       const info = insertUser.run(d.username, d.email, hash, d.template_id, 0);
       insertContent.run(info.lastInsertRowid, JSON.stringify(d.content));
