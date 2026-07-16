@@ -589,61 +589,6 @@
   <% } %>
 
   <!-- JS -->
-  <script>
-    (function() {
-      'use strict';
-
-      // Reveal via IntersectionObserver
-      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var reveals = document.querySelectorAll('.reveal');
-
-      if (reducedMotion) {
-        reveals.forEach(function(el) { el.classList.add('visible'); });
-      } else if ('IntersectionObserver' in window) {
-        var observer = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting) {
-              var d = parseInt(e.target.dataset.delay || '0', 10);
-              setTimeout(function() { e.target.classList.add('visible'); }, d);
-              observer.unobserve(e.target);
-            }
-          });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function(el) { observer.observe(el); });
-      } else {
-        reveals.forEach(function(el) { el.classList.add('visible'); });
-      }
-
-      // Lightbox
-      var lb = document.getElementById('lightbox');
-      var lbImg = document.getElementById('lb-img');
-      var lbClose = document.getElementById('lb-close');
-
-      document.querySelectorAll('.g-item').forEach(function(item) {
-        item.addEventListener('click', function() {
-          lbImg.src = item.getAttribute('data-full') || item.querySelector('img').src;
-          lbImg.alt = item.querySelector('img').alt || 'Gallery image';
-          lb.classList.add('open');
-          lb.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-        });
-      });
-
-      function closeLb() {
-        lb.classList.remove('open');
-        lb.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        setTimeout(function() { lbImg.src = ''; }, 300);
-      }
-
-      lbClose.addEventListener('click', closeLb);
-      lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lb.classList.contains('open')) closeLb(); });
-
-      // Set min date for date inputs
-      var today = new Date().toISOString().split('T')[0];
-      document.querySelectorAll('input[type="date"]').forEach(function(inp) { inp.min = today; });
-    })();
-  </script>
+  <script src="/js/shared.js"></script>
 </body>
 </html>
