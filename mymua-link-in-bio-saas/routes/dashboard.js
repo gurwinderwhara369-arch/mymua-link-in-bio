@@ -184,7 +184,7 @@ router.get('/templates', (req, res) => {
 
 router.post('/templates', (req, res) => {
   const tid = parseInt(req.body.template_id);
-  if (tid >= 1 && tid <= 3) {
+  if (tid >= 1 && tid <= 9) {
     getDb().prepare('UPDATE users SET template_id = ? WHERE id = ?').run(tid, req.session.userId);
   }
   res.redirect('/dashboard/templates');

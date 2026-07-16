@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FEFAF6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="<%= user.bio ? user.bio.slice(0, 160) : user.name + ' — Soft Glow Makeup specialist. Skin-first artistry, glass skin, dewy bridal, natural glow.' %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title><%= user.name %> — Soft Glow Makeup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #FEFAF6;
+      color: #5C3D2E;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-fraunces { font-family: 'Fraunces', serif; }
+
+    .wrap { max-width: 480px; margin: 0 auto; padding: 0 20px; position: relative; }
+
+    /* Dreamy bokeh */
+    .bokeh { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0.35; }
+    @keyframes floatBokeh {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -30px) scale(1.08); }
+      66% { transform: translate(-15px, 20px) scale(0.94); }
+    }
+    .bokeh-1 { animation: floatBokeh 14s ease-in-out infinite; }
+    .bokeh-2 { animation: floatBokeh 18s ease-in-out infinite reverse; }
+    .bokeh-3 { animation: floatBokeh 16s ease-in-out infinite 3s; }
+
+    /* Grain */
+    .grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.025; mix-blend-mode: overlay; }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.75s ease, transform 0.75s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .bokeh { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* Hero */
+    .hero { position: relative; min-height: 95svh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&fit=crop') center/cover no-repeat; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(254,250,246,0.1) 0%, rgba(254,250,246,0.92) 80%); }
+    .hero-body { position: relative; z-index: 2; text-align: center; padding: 80px 20px 100px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #8B6F5E; margin-bottom: 12px; font-weight: 500; }
+    .hero-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(2.2rem, 8vw, 3rem); color: #5C3D2E; line-height: 1.1; font-style: italic; }
+    .hero-tag { font-size: 0.95rem; color: #8B6F5E; margin-top: 14px; font-weight: 300; font-style: italic; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 32px; }
+    .btn {
+      display: inline-flex; align-items: center; padding: 13px 28px; border-radius: 9999px;
+      font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;
+      text-transform: uppercase; cursor: pointer; border: 2px solid transparent; transition: all 0.25s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-rose { background: #C5846C; color: #FFF; border-color: #C5846C; }
+    .btn-rose:hover { background: #A86E58; box-shadow: 0 6px 24px rgba(197,132,108,0.4); }
+    .btn-ghost { background: transparent; color: #5C3D2E; border-color: #E8B4A0; }
+    .btn-ghost:hover { background: rgba(232,180,160,0.12); }
+
+    .scroll-hint { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 2; animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    /* Rule */
+    .peach-rule { height: 2px; background: linear-gradient(90deg, transparent, #E8B4A0, transparent); border-radius: 1px; }
+    .peach-rule-sm { width: 36px; height: 2px; background: #E8B4A0; margin: 0 auto 22px; border-radius: 1px; }
+
+    /* Section titles */
+    .sec-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #C5846C; font-weight: 500; margin-bottom: 5px; }
+    .sec-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.85rem; color: #5C3D2E; line-height: 1.15; }
+
+    /* About */
+    .about { padding: 70px 0; background: #FEFAF6; position: relative; }
+    .bio-card { background: #FFF; border-radius: 20px; padding: 22px 20px; border-left: 4px solid #C5846C; }
+    .bio-text { font-size: 0.92rem; color: #5C3D2E; line-height: 1.8; font-weight: 300; }
+    .spec-badge { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 0.72rem; font-weight: 500; margin: 3px; }
+    .badge-rose { background: #F5D5C8; color: #5C3D2E; }
+    .badge-peach { background: #E8B4A0; color: #FFF; }
+    .badge-terra { background: #C5846C; color: #FFF; }
+
+    /* Services */
+    .services { padding: 70px 0; background: #FFF; }
+    .svc-card {
+      background: #FEFAF6; border-radius: 20px; padding: 18px 16px;
+      border-left: 4px solid #C5846C; transition: all 0.25s;
+    }
+    .svc-card:hover { box-shadow: 0 4px 20px rgba(197,132,108,0.15); transform: translateX(4px); }
+    .svc-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1rem; color: #5C3D2E; margin-bottom: 3px; }
+    .svc-desc { font-size: 0.75rem; color: #8B6F5E; font-weight: 300; line-height: 1.5; margin-bottom: 6px; }
+    .svc-dur { font-size: 0.65rem; color: #C5846C; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+    .svc-price { font-family: 'Fraunces', serif; font-weight: 500; font-size: 0.9rem; color: #C5846C; margin-top: 4px; }
+
+    /* Gallery */
+    .gallery-sec { padding: 70px 0; background: #FEFAF6; }
+    .g-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .g-item {
+      position: relative; overflow: hidden; border-radius: 20px; cursor: pointer; aspect-ratio: 4/5;
+      transition: box-shadow 0.4s, transform 0.3s;
+    }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.5s ease; filter: sepia(6%) saturate(108%); }
+    .g-item:hover img { transform: scale(1.05); }
+    .g-item:hover { box-shadow: 0 0 0 3px rgba(197,132,108,0.45); }
+
+    .f-pill {
+      padding: 6px 16px; border: 1.5px solid rgba(197,132,108,0.4); border-radius: 999px;
+      font-size: 11px; font-family: 'Inter', sans-serif; letter-spacing: 0.04em;
+      color: #5C3D2E; background: transparent; cursor: pointer; transition: all 0.2s; font-weight: 400;
+    }
+    .f-pill:hover, .f-pill.active { background: #C5846C; border-color: #C5846C; color: #FFF; }
+
+    /* Lightbox */
+    .lb {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      align-items: center; justify-content: center; background: rgba(92,61,46,0.94); padding: 20px;
+    }
+    .lb.open { display: flex; }
+    .lb img { max-width: 100%; max-height: 82dvh; border-radius: 16px; object-fit: contain; animation: lbIn 0.35s ease; }
+    @keyframes lbIn { from { opacity: 0; transform: scale(0.93); } to { opacity: 1; transform: scale(1); } }
+    .lb-close {
+      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #FFF;
+      font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .lb-close:hover { background: rgba(197,132,108,0.35); }
+
+    /* Testimonials */
+    .testimonials { padding: 70px 0; background: #FFF; }
+    .t-card {
+      background: #FEFAF6; border-radius: 20px; padding: 22px 20px;
+      border-left: 3px solid #E8B4A0; box-shadow: 0 2px 12px rgba(197,132,108,0.08);
+    }
+    .t-text { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 0.92rem; color: #5C3D2E; line-height: 1.75; }
+    .t-author { font-size: 0.72rem; color: #C5846C; letter-spacing: 0.04em; font-weight: 500; margin-top: 10px; }
+    .t-event { font-size: 0.65rem; color: #8B6F5E; margin-top: 2px; }
+
+    /* Availability */
+    .avail { padding: 70px 0; background: #F5D5C8; }
+    .a-card {
+      flex: 0 0 auto; background: #FFF; border-radius: 18px; padding: 14px 18px;
+      text-align: center; border-top: 3px solid #C5846C; min-width: 76px; box-shadow: 0 2px 10px rgba(197,132,108,0.1);
+    }
+    .a-day { font-family: 'Fraunces', serif; font-size: 1.3rem; color: #5C3D2E; }
+    .a-month { font-size: 0.65rem; color: #8B6F5E; letter-spacing: 0.08em; text-transform: uppercase; }
+    .a-status { font-size: 0.65rem; color: #5B8A72; margin-top: 5px; font-weight: 500; }
+    .a-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .a-scroll::-webkit-scrollbar { display: none; }
+
+    /* Contact */
+    .contact-sec { padding: 70px 0; background: #FEFAF6; }
+    .c-row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      background: #FFF; border-radius: 16px; border-left: 3px solid #E8B4A0;
+      margin-bottom: 10px; transition: box-shadow 0.2s; text-decoration: none; color: inherit;
+    }
+    .c-row:hover { box-shadow: 0 4px 18px rgba(232,180,160,0.2); }
+    .c-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: #F5D5C8;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .c-icon svg { width: 18px; height: 18px; stroke: #5C3D2E; fill: none; stroke-width: 1.5; }
+    .c-label { font-size: 0.65rem; color: #8B6F5E; letter-spacing: 0.06em; text-transform: uppercase; }
+    .c-val { font-size: 0.85rem; color: #5C3D2E; margin-top: 1px; }
+
+    /* Form */
+    .booking-sec { padding: 70px 0; background: #FFF; }
+    .f-label { display: block; font-size: 0.72rem; font-weight: 500; color: #5C3D2E; margin-bottom: 5px; letter-spacing: 0.03em; }
+    .f-label span { color: #C5846C; }
+    .f-input, .f-select, .f-textarea {
+      width: 100%; padding: 13px 16px; background: #FEFAF6; border: 1.5px solid #F5D5C8;
+      border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 300;
+      color: #5C3D2E; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-input::placeholder, .f-textarea::placeholder { color: #E8B4A0; }
+    .f-input:focus, .f-select:focus, .f-textarea:focus { border-color: #C5846C; box-shadow: 0 0 0 3px rgba(197,132,108,0.18); }
+    .f-textarea { resize: vertical; min-height: 100px; }
+    .f-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B6F5E' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+    .f-select option { background: #FEFAF6; color: #5C3D2E; }
+
+    /* Skin type selector */
+    .skin-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skin-opt {
+      padding: 8px 14px; border-radius: 999px; border: 1.5px solid #F5D5C8;
+      font-size: 0.78rem; cursor: pointer; transition: all 0.2s; background: #FEFAF6; color: #5C3D2E;
+    }
+    .skin-opt:hover, .skin-opt.selected { background: #C5846C; border-color: #C5846C; color: #FFF; }
+
+    /* WhatsApp FAB */
+    .wa-fab {
+      position: fixed; bottom: 22px; right: 22px; z-index: 50;
+      width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.45); display: flex; align-items: center;
+      justify-content: center; text-decoration: none; transition: transform 0.2s;
+    }
+    .wa-fab:hover { transform: scale(1.08); }
+    .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+
+    footer { text-align: center; padding: 22px 0; border-top: 2px solid #E8B4A0; background: #FFF; }
+    footer p { font-size: 0.7rem; color: #8B6F5E; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body class="bg-[#FEFAF6] text-[#5C3D2E] min-h-dvh overflow-x-hidden">
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" id="home">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="bokeh bokeh-1" style="width:280px;height:280px;background:radial-gradient(circle,rgba(245,213,200,0.5) 0%,transparent 70%);top:5%;right:-60px;" aria-hidden="true"></div>
+    <div class="bokeh bokeh-2" style="width:200px;height:200px;background:radial-gradient(circle,rgba(232,180,160,0.45) 0%,transparent 70%);bottom:15%;left:-40px;" aria-hidden="true"></div>
+    <div class="bokeh bokeh-3" style="width:160px;height:160px;background:radial-gradient(circle,rgba(197,132,108,0.3) 0%,transparent 70%);top:40%;right:10%;" aria-hidden="true"></div>
+    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]" aria-hidden="true"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#grain)"/></svg>
+    <div class="hero-body">
+      <p class="hero-eyebrow">Skin-First Makeup Artistry</p>
+      <h1 class="hero-name"><%= user.name %></h1>
+      <p class="hero-tag">"Your skin. Lit from within."</p>
+      <div class="hero-ctas">
+        <a href="#gallery" class="btn btn-rose">View My Work</a>
+        <a href="#booking" class="btn btn-ghost">Book a Session</a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B6F5E" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg>
+    </div>
+  </section>
+
+  <!-- ====== ABOUT ====== -->
+  <section class="about" id="about">
+    <div class="bokeh bokeh-2" style="width:240px;height:240px;background:radial-gradient(circle,rgba(245,213,200,0.4) 0%,transparent 70%);top:10%;left:-60px;" aria-hidden="true"></div>
+    <div class="wrap relative z-10">
+      <div class="reveal">
+        <p class="sec-label">About</p>
+        <h2 class="sec-title mt-1">The Glow<br/>Philosophy</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <div class="reveal" data-delay="150">
+        <div class="bio-card">
+          <p class="bio-text">
+            <%= user.bio || 'I believe the best makeup enhances your natural skin — never masks it. Specializing in glass skin, dewy finishes, and soft-glow bridal looks, I use skincare-first products that let your real skin shine through. Because your skin deserves better than heavy foundation.' %>
+          </p>
+        </div>
+      </div>
+      <div class="reveal flex flex-wrap gap-2 mt-6" data-delay="200">
+        <span class="spec-badge badge-terra">Glass Skin</span>
+        <span class="spec-badge badge-rose">Dewy Finish</span>
+        <span class="spec-badge badge-peach">Natural Glow</span>
+        <span class="spec-badge badge-terra">Skincare-First</span>
+        <span class="spec-badge badge-rose">Soft Bridal</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SERVICES ====== -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Services</p>
+        <h2 class="sec-title mt-1">Treatments<br/>& Sessions</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <div class="grid grid-cols-1 gap-3">
+        <div class="svc-card reveal">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="svc-name">Glass Skin Bridal</p>
+              <p class="svc-desc">Prep + perfect. Skincare-infused bridal makeup that photographs like a dream.</p>
+              <p class="svc-dur">Duration: 2 hours</p>
+            </div>
+            <p class="svc-price">₹18K+</p>
+          </div>
+        </div>
+        <div class="svc-card reveal">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="svc-name">Dewy Glow Session</p>
+              <p class="svc-desc">Fresh-faced, luminous makeup for pre-wedding celebrations and events.</p>
+              <p class="svc-dur">Duration: 90 min</p>
+            </div>
+            <p class="svc-price">₹8K+</p>
+          </div>
+        </div>
+        <div class="svc-card reveal">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="svc-name">Soft Glam Bridal</p>
+              <p class="svc-desc">No-makeup makeup bridal look. Enhanced, not masked. Your skin, only better.</p>
+              <p class="svc-dur">Duration: 2.5 hours</p>
+            </div>
+            <p class="svc-price">₹22K+</p>
+          </div>
+        </div>
+        <div class="svc-card reveal">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="svc-name">Skincare Prep + Makeup</p>
+              <p class="svc-desc">Full facial prep with lymphatic drainage + makeup. For the detail-oriented bride.</p>
+              <p class="svc-dur">Duration: 3 hours</p>
+            </div>
+            <p class="svc-price">₹28K+</p>
+          </div>
+        </div>
+        <div class="svc-card reveal">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="svc-name">Trial Session</p>
+              <p class="svc-desc">Test your wedding day look. Includes skincare consultation.</p>
+              <p class="svc-dur">Duration: 90 min</p>
+            </div>
+            <p class="svc-price">₹5K+</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== GALLERY ====== -->
+  <section class="gallery-sec" id="gallery">
+    <div class="bokeh bokeh-1" style="width:200px;height:200px;background:radial-gradient(circle,rgba(232,180,160,0.35) 0%,transparent 70%);bottom:5%;right:-40px;" aria-hidden="true"></div>
+    <div class="wrap relative z-10">
+      <div class="reveal">
+        <p class="sec-label">The Glow Edit</p>
+        <h2 class="sec-title mt-1">Portfolio</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <div class="reveal flex flex-wrap gap-2 mb-5" data-delay="100" id="filter-pills">
+        <button class="f-pill active" data-filter="all">All</button>
+        <button class="f-pill" data-filter="bridal">Bridal</button>
+        <button class="f-pill" data-filter="glow">Glow</button>
+        <button class="f-pill" data-filter="natural">Natural</button>
+      </div>
+      <div class="g-grid reveal" data-delay="150" id="g-grid">
+        <div class="g-item" data-category="bridal" data-full="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&fit=crop" alt="Soft bridal glow" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="glow" data-full="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80&fit=crop" alt="Glass skin" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="natural" data-full="https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=600&q=80&fit=crop" alt="Natural makeup" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="bridal" data-full="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&q=80&fit=crop" alt="Bridal natural" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="glow" data-full="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80&fit=crop" alt="Dewy finish" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="natural" data-full="https://images.unsplash.com/photo-1597225244660-1cd128c6888a?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1597225244660-1cd128c6888a?w=600&q=80&fit=crop" alt="No-makeup makeup" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="bridal" data-full="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=600&q=80&fit=crop" alt="Bridal glow" loading="lazy" />
+        </div>
+        <div class="g-item" data-category="glow" data-full="https://images.unsplash.com/photo-1516575334481-fc62ed60bb8e?w=1200&q=80&fit=crop">
+          <img src="https://images.unsplash.com/photo-1516575334481-fc62ed60bb8e?w=600&q=80&fit=crop" alt="Glow serum skin" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
+    <button class="lb-close" id="lb-close" aria-label="Close lightbox">✕</button>
+    <img src="" alt="" id="lb-img" />
+  </div>
+
+  <!-- ====== TESTIMONIALS ====== -->
+  <section class="testimonials" id="testimonials">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Kind Words</p>
+        <h2 class="sec-title mt-1">Glow<br/>Stories</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <div class="reveal mt-6" data-delay="150">
+        <div class="t-card">
+          <p class="t-text">"I've never felt more like myself. The glass skin bridal look held through tears, hugs, and 12 hours of dancing. My husband said I was glowing from the inside out."</p>
+          <p class="t-author">Riya S. — Bride, 2025</p>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"As someone with sensitive skin, I was nervous about wedding makeup. She used only my approved products and the result was the most natural, radiant version of me."</p>
+          <p class="t-author">Kavya M. — Bride, 2025</p>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"The dewy glow session before my sangeet was pure magic. I got so many compliments on my skin. People thought I was wearing no makeup at all."</p>
+          <p class="t-author">Ananya P. — Sangeet, 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== AVAILABILITY ====== -->
+  <section class="avail" id="availability">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Open Slots</p>
+        <h2 class="sec-title mt-1">Book Your<br/>Glow Session</h2>
+        <div class="peach-rule-sm"></div>
+        <div class="flex items-center gap-2 mb-5">
+          <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+          <p class="text-xs text-[#8B6F5E] tracking-wide">Limited slots — book 2–3 weeks ahead</p>
+        </div>
+      </div>
+      <div class="reveal a-scroll" data-delay="150">
+        <div class="a-card"><p class="a-day">10</p><p class="a-month">Jul</p><p class="a-status">2 slots</p></div>
+        <div class="a-card"><p class="a-day">17</p><p class="a-month">Jul</p><p class="a-status">3 slots</p></div>
+        <div class="a-card"><p class="a-day">24</p><p class="a-month">Jul</p><p class="a-status">1 slot</p></div>
+        <div class="a-card"><p class="a-day">02</p><p class="a-month">Aug</p><p class="a-status">2 slots</p></div>
+        <div class="a-card"><p class="a-day">09</p><p class="a-month">Aug</p><p class="a-status">3 slots</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONTACT ====== -->
+  <section class="contact-sec" id="contact">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Get In Touch</p>
+        <h2 class="sec-title mt-1">Let's<br/>Glow Together</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <div class="reveal mt-6" data-delay="150">
+        <% if (user.social && user.social.phone) { %>
+        <a href="tel:<%= user.social.phone %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><p class="c-label">Phone</p><p class="c-val"><%= user.social.phone %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.whatsapp) { %>
+        <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'm%20interested%20in%20soft%20glow%20makeup%20services." target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon" style="background:#25D366;"><svg viewBox="0 0 24 24" fill="#FFF"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+          <div><p class="c-label">WhatsApp</p><p class="c-val">Chat for booking</p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.instagram) { %>
+        <a href="https://instagram.com/<%= user.social.instagram %>" target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#5C3D2E" stroke="none"/></svg></div>
+          <div><p class="c-label">Instagram</p><p class="c-val">@<%= user.social.instagram %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.email) { %>
+        <a href="mailto:<%= user.social.email %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+          <div><p class="c-label">Email</p><p class="c-val"><%= user.social.email %></p></div>
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== BOOKING ====== -->
+  <section class="booking-sec" id="booking">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Book</p>
+        <h2 class="sec-title mt-1">Let's Glow<br/>Together</h2>
+        <div class="peach-rule-sm"></div>
+      </div>
+      <form action="/booking/<%= user.username %>" method="POST" class="reveal mt-2" data-delay="150" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="grid gap-4">
+          <div>
+            <label class="f-label" for="full_name">Full Name <span>*</span></label>
+            <input class="f-input" type="text" id="full_name" name="full_name" placeholder="Your full name" required autocomplete="name" />
+          </div>
+          <div>
+            <label class="f-label" for="email">Email <span>*</span></label>
+            <input class="f-input" type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
+          </div>
+          <div>
+            <label class="f-label" for="phone">Phone <span>*</span></label>
+            <input class="f-input" type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required autocomplete="tel" />
+          </div>
+          <div>
+            <label class="f-label" for="event_date">Event Date</label>
+            <input class="f-input" type="date" id="event_date" name="event_date" min="<%= new Date().toISOString().split('T')[0] %>" />
+          </div>
+          <div>
+            <label class="f-label">Skin Type</label>
+            <div class="skin-options" id="skin-options">
+              <button type="button" class="skin-opt" data-value="Dry">Dry</button>
+              <button type="button" class="skin-opt" data-value="Oily">Oily</button>
+              <button type="button" class="skin-opt" data-value="Combination">Combination</button>
+              <button type="button" class="skin-opt" data-value="Sensitive">Sensitive</button>
+              <button type="button" class="skin-opt" data-value="Normal">Normal</button>
+            </div>
+            <input type="hidden" name="skin_type" id="skin_type" />
+          </div>
+          <div>
+            <label class="f-label" for="desired_look">Desired Look</label>
+            <select class="f-select" id="desired_look" name="desired_look">
+              <option value="" disabled selected>Select look</option>
+              <option value="Natural Glow">Natural Glow</option>
+              <option value="Glass Skin">Glass Skin</option>
+              <option value="Soft Glam">Soft Glam</option>
+              <option value="Dewy Bridal">Dewy Bridal</option>
+              <option value="No-Makeup Makeup">No-Makeup Makeup</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label" for="message">Message</label>
+            <textarea class="f-textarea" id="message" name="message" placeholder="Tell me about your skin goals, event, and the glow you imagine..." rows="3"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-rose mt-5 w-full justify-center" style="padding:15px 28px;">Book My Session</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="wrap">
+      <p>&copy; <%= new Date().getFullYear() %> <%= user.name %> — Your skin. Lit from within.</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <% if (user.social && user.social.whatsapp) { %>
+  <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'm%20interested%20in%20soft%20glow%20makeup%20services." target="_blank" rel="noopener" class="wa-fab" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+  <% } %>
+
+  <script>
+    (function() {
+      'use strict';
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.reveal');
+      if (reduced) { reveals.forEach(function(el) { el.classList.add('visible'); }); }
+      else if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              var d = parseInt(e.target.dataset.delay || '0', 10);
+              setTimeout(function() { e.target.classList.add('visible'); }, d);
+              obs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { obs.observe(el); });
+      } else { reveals.forEach(function(el) { el.classList.add('visible'); }); }
+
+      // Gallery filter
+      var pills = document.querySelectorAll('#filter-pills .f-pill');
+      var items = document.querySelectorAll('#g-grid .g-item');
+      pills.forEach(function(p) {
+        p.addEventListener('click', function() {
+          var f = p.dataset.filter;
+          pills.forEach(function(x) { x.classList.remove('active'); }); p.classList.add('active');
+          items.forEach(function(item) {
+            var cat = item.dataset.category || '';
+            item.style.display = (f === 'all' || cat === f) ? '' : 'none';
+          });
+        });
+      });
+
+      // Lightbox
+      var lb = document.getElementById('lightbox'), lbImg = document.getElementById('lb-img'), lbCl = document.getElementById('lb-close');
+      document.querySelectorAll('.g-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          lbImg.src = item.dataset.full; lbImg.alt = item.querySelector('img').alt;
+          lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+        });
+      });
+      function closeLb() { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; setTimeout(function() { lbImg.src = ''; }, 300); }
+      lbCl.addEventListener('click', closeLb);
+      lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lb.classList.contains('open')) closeLb(); });
+
+      // Skin type selector
+      var skinOpts = document.querySelectorAll('#skin-options .skin-opt');
+      var skinInput = document.getElementById('skin_type');
+      skinOpts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          skinOpts.forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          skinInput.value = opt.dataset.value;
+        });
+      });
+
+      document.querySelectorAll('input[type="date"]').forEach(function(inp) { inp.min = new Date().toISOString().split('T')[0]; });
+    })();
+  </script>
+</body>
+</html>

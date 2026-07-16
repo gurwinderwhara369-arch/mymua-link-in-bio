@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAF9F6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="<%= user.bio ? user.bio.slice(0, 160) : user.name + ' — International bridal makeup artist for luxury destination weddings.' %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title><%= user.name %> — Destination Bridal Makeup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #FAF9F6;
+      color: #3D3832;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-display { font-family: 'Cormorant Infant', serif; }
+
+    /* Container */
+    .container { max-width: 480px; margin: 0 auto; padding: 0 20px; position: relative; }
+
+    /* Stardust particles */
+    .stardust { position: fixed; pointer-events: none; inset: 0; z-index: 0; overflow: hidden; }
+    .s-particle {
+      position: absolute; border-radius: 50%; background: #E8D5B7; opacity: 0;
+      animation: starFloat var(--dur, 14s) var(--del, 0s) linear infinite;
+    }
+    @keyframes starFloat {
+      0%   { transform: translate(0, 0) scale(0.5); opacity: 0; }
+      15%  { opacity: 0.7; }
+      85%  { opacity: 0.3; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: 0; }
+    }
+
+    /* Ambient orbs */
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .stardust { display: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* Hero */
+    .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80&fit=crop') center/cover no-repeat; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250,249,246,0.25) 0%, rgba(250,249,246,0.92) 80%); }
+    .hero-orb { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(232,213,183,0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+    .hero-body { position: relative; z-index: 2; text-align: center; padding: 80px 20px 100px; }
+    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: #7A6E61; margin-bottom: 12px; font-weight: 400; }
+    .hero-name { font-family: 'Cormorant Infant', serif; font-weight: 600; font-size: clamp(2.2rem, 8vw, 3rem); color: #3D3832; line-height: 1.1; margin: 0; }
+    .hero-tag { font-size: 1rem; color: #B89B71; font-style: italic; margin-top: 14px; font-weight: 300; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 32px; }
+    .btn {
+      display: inline-flex; align-items: center; padding: 13px 28px; border-radius: 9999px;
+      font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; cursor: pointer; border: 2px solid transparent; transition: all 0.25s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-fill { background: #B89B71; color: #fff; border-color: #B89B71; }
+    .btn-fill:hover { background: #9A7F5A; border-color: #9A7F5A; box-shadow: 0 6px 24px rgba(184,155,113,0.4); }
+    .btn-ghost { background: transparent; color: #3D3832; border-color: #3D3832; }
+    .btn-ghost:hover { background: rgba(61,56,50,0.06); }
+
+    /* Scroll hint */
+    .scroll-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2; animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    /* Champagne rule */
+    .c-rule { height: 2px; background: #E8D5B7; border-radius: 1px; }
+    .c-rule-sm { width: 40px; height: 2px; background: #E8D5B7; margin: 0 auto 24px; }
+
+    /* Section titles */
+    .sec-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: #B89B71; font-weight: 500; margin-bottom: 6px; }
+    .sec-title { font-family: 'Cormorant Infant', serif; font-weight: 500; font-size: 1.85rem; color: #3D3832; line-height: 1.15; }
+
+    /* About */
+    .about { background: #F0EBE0; padding: 70px 0; position: relative; }
+    .stat-card { background: #fff; border-radius: 20px; padding: 18px 10px; text-align: center; box-shadow: 0 4px 20px rgba(184,155,113,0.15); }
+    .stat-num { font-family: 'Cormorant Infant', serif; font-weight: 600; font-size: 1.6rem; color: #B89B71; }
+    .stat-lbl { font-size: 0.65rem; color: #7A6E61; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+
+    /* Destinations */
+    .dest { padding: 70px 0; background: #FAF9F6; }
+    .dest-pill {
+      display: inline-flex; padding: 8px 18px; border-radius: 999px; font-size: 0.78rem;
+      border: 1.5px solid rgba(232,213,183,0.9); color: #3D3832; background: #fff;
+      font-weight: 400; letter-spacing: 0.03em; white-space: nowrap;
+    }
+
+    /* Services */
+    .services { padding: 70px 0; background: #fff; }
+    .svc-card {
+      background: #fff; border-radius: 20px; padding: 20px;
+      box-shadow: 0 4px 20px rgba(184,155,113,0.12);
+      border-top: 3px solid #E8D5B7; transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .svc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(184,155,113,0.22); }
+    .svc-name { font-family: 'Cormorant Infant', serif; font-weight: 500; font-size: 1.05rem; color: #3D3832; margin-bottom: 4px; }
+    .svc-desc { font-size: 0.78rem; color: #7A6E61; font-weight: 300; line-height: 1.55; margin-bottom: 10px; }
+    .price-pill { display: inline-block; background: #E8D5B7; color: #3D3832; font-size: 0.72rem; font-weight: 500; padding: 4px 14px; border-radius: 9999px; letter-spacing: 0.03em; }
+
+    /* Gallery */
+    .gallery-sec { padding: 70px 0; background: #FAF9F6; }
+    .g-wrap { position: relative; }
+    .g-scroll {
+      display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; padding: 4px 4px 12px;
+      scrollbar-width: none; mask-image: linear-gradient(to right, black 88%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    }
+    .g-scroll::-webkit-scrollbar { display: none; }
+    .g-item {
+      flex: 0 0 auto; width: 72%; scroll-snap-align: start; border-radius: 20px;
+      overflow: hidden; cursor: pointer; aspect-ratio: 3/4;
+      box-shadow: 0 4px 18px rgba(61,56,50,0.08); transition: transform 0.3s;
+    }
+    .g-item:hover { transform: scale(1.02); }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      align-items: center; justify-content: center; background: rgba(61,56,50,0.92);
+      backdrop-filter: blur(12px); padding: 20px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 82dvh; border-radius: 16px; object-fit: contain; animation: lbIn 0.35s ease; }
+    @keyframes lbIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+    .lb-close {
+      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .lb-close:hover { background: rgba(232,213,183,0.25); border-color: #E8D5B7; }
+
+    /* Testimonials */
+    .testimonials { padding: 70px 0; background: #F0EBE0; }
+    .t-card {
+      background: #fff; border-radius: 20px; padding: 24px 20px;
+      box-shadow: 0 2px 14px rgba(61,56,50,0.05); text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .t-card::before {
+      content: '\201C'; font-family: 'Cormorant Infant', serif; font-size: 6rem; line-height: 1;
+      color: #E8D5B7; position: absolute; top: 0; left: 12px; opacity: 0.5; pointer-events: none;
+    }
+    .t-text { font-style: italic; font-weight: 300; font-size: 0.88rem; color: #3D3832; line-height: 1.75; padding-top: 20px; }
+    .t-author { font-size: 0.7rem; color: #B89B71; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 12px; font-weight: 500; }
+    .t-dots { display: flex; justify-content: center; gap: 6px; margin: 20px 0; }
+    .t-dots span { width: 4px; height: 4px; border-radius: 50%; background: #E8D5B7; }
+
+    /* Availability */
+    .avail { padding: 70px 0; background: #fff; }
+    .d-card {
+      flex: 0 0 auto; background: #fff; border-radius: 18px; padding: 14px 20px;
+      text-align: center; border-top: 3px solid #E8D5B7;
+      box-shadow: 0 3px 14px rgba(184,155,113,0.12); min-width: 82px;
+    }
+    .d-month { font-size: 0.65rem; color: #7A6E61; letter-spacing: 0.1em; text-transform: uppercase; }
+    .d-day { font-family: 'Cormorant Infant', serif; font-weight: 600; font-size: 1.35rem; color: #3D3832; }
+    .d-loc { font-size: 0.65rem; color: #B89B71; margin-top: 2px; }
+    .d-status { font-size: 0.65rem; color: #4ade80; margin-top: 6px; font-weight: 500; }
+    .dates-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .dates-row::-webkit-scrollbar { display: none; }
+
+    /* Contact */
+    .contact-sec { padding: 70px 0; background: #FAF9F6; }
+    .c-row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      background: #fff; border-radius: 16px; border-left: 3px solid #E8D5B7;
+      margin-bottom: 10px; transition: box-shadow 0.2s;
+    }
+    .c-row:hover { box-shadow: 0 4px 18px rgba(184,155,113,0.15); }
+    .c-icon {
+      width: 38px; height: 38px; border-radius: 50%; background: #E8D5B7;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .c-icon svg { width: 16px; height: 16px; stroke: #3D3832; fill: none; stroke-width: 1.5; }
+    .c-label { font-size: 0.66rem; color: #7A6E61; letter-spacing: 0.06em; text-transform: uppercase; }
+    .c-val { font-size: 0.85rem; color: #3D3832; font-weight: 400; margin-top: 1px; }
+
+    /* Form */
+    .booking-sec { padding: 70px 0; background: #fff; }
+    .f-label { display: block; font-size: 0.75rem; font-weight: 500; color: #3D3832; margin-bottom: 5px; letter-spacing: 0.02em; }
+    .f-label span { color: #B89B71; }
+    .f-input, .f-select, .f-textarea {
+      width: 100%; padding: 13px 16px; background: #FAF9F6; border: 1.5px solid #E8D5B7;
+      border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 300;
+      color: #3D3832; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-input:focus, .f-select:focus, .f-textarea:focus { border-color: #B89B71; box-shadow: 0 0 0 3px rgba(232,213,183,0.28); }
+    .f-input::placeholder, .f-textarea::placeholder { color: #C8A87C; opacity: 0.55; }
+    .f-textarea { resize: vertical; min-height: 100px; }
+    .f-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A6E61' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer; }
+
+    /* WhatsApp FAB */
+    .wa-fab {
+      position: fixed; bottom: 22px; right: 22px; z-index: 50;
+      width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.4); display: flex; align-items: center;
+      justify-content: center; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none;
+    }
+    .wa-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(37,211,102,0.55); }
+    .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+
+    /* Footer */
+    footer { text-align: center; padding: 20px 0; border-top: 2px solid #E8D5B7; background: #fff; }
+    footer p { font-size: 0.7rem; color: #7A6E61; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body class="bg-[#FAF9F6] text-[#3D3832] min-h-dvh overflow-x-hidden">
+
+  <!-- Stardust -->
+  <div class="stardust" aria-hidden="true">
+    <span class="s-particle" style="left:5%;top:10%;--dx:40px;--dy:-120px;--dur:14s;--del:0s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:15%;top:20%;--dx:80px;--dy:-60px;--dur:16s;--del:2s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:25%;top:5%;--dx:-30px;--dy:-100px;--dur:13s;--del:4s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:38%;top:30%;--dx:60px;--dy:-40px;--dur:18s;--del:1s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:50%;top:15%;--dx:-50px;--dy:-80px;--dur:15s;--del:3s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:60%;top:25%;--dx:70px;--dy:-50px;--dur:12s;--del:5s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:72%;top:8%;--dx:-20px;--dy:-110px;--dur:17s;--del:0.5s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:80%;top:35%;--dx:90px;--dy:-30px;--dur:14s;--del:2.5s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:90%;top:18%;--dx:-60px;--dy:-90px;--dur:16s;--del:4.5s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:10%;top:45%;--dx:30px;--dy:-70px;--dur:13s;--del:1.5s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:30%;top:55%;--dx:-40px;--dy:-130px;--dur:19s;--del:3.5s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:45%;top:40%;--dx:20px;--dy:-50px;--dur:11s;--del:6s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:55%;top:50%;--dx:-80px;--dy:-40px;--dur:16s;--del:2s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:68%;top:38%;--dx:100px;--dy:-20px;--dur:13s;--del:5.5s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:82%;top:28%;--dx:-10px;--dy:-100px;--dur:18s;--del:1s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:92%;top:48%;--dx:50px;--dy:-90px;--dur:14s;--del:3s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:20%;top:65%;--dx:-80px;--dy:-30px;--dur:17s;--del:0s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:42%;top:70%;--dx:40px;--dy:-60px;--dur:12s;--del:4s;width:3px;height:3px;"></span>
+    <span class="s-particle" style="left:70%;top:60%;--dx:-30px;--dy:-100px;--dur:15s;--del:2.5s;width:2px;height:2px;"></span>
+    <span class="s-particle" style="left:88%;top:72%;--dx:60px;--dy:-40px;--dur:15s;--del:1.5s;width:2px;height:2px;"></span>
+  </div>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" id="home">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-orb" style="top:-80px;right:-100px;" aria-hidden="true"></div>
+    <div class="hero-orb" style="bottom:-120px;left:-80px;" aria-hidden="true"></div>
+    <div class="hero-body">
+      <p class="hero-eyebrow">International Bridal Makeup Artist</p>
+      <h1 class="hero-name"><%= user.name %></h1>
+      <p class="hero-tag">"<%= user.title || 'Wherever you say \"I do\".' %>"</p>
+      <div class="hero-ctas">
+        <a href="#gallery" class="btn btn-fill">View Portfolio</a>
+        <a href="#booking" class="btn btn-ghost">Inquire Now</a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A6E61" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg>
+    </div>
+  </section>
+
+  <!-- ====== ABOUT ====== -->
+  <section class="about" id="about">
+    <div class="orb" style="width:280px;height:280px;background:radial-gradient(circle,rgba(232,213,183,0.1) 0%,transparent 70%);top:-60px;left:-80px;" aria-hidden="true"></div>
+    <div class="container relative z-10">
+      <div class="reveal">
+        <p class="sec-label">About</p>
+        <h2 class="sec-title mt-1">The Artist</h2>
+        <div class="c-rule-sm mt-4"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-8 items-center" data-reveal>
+        <div>
+          <p class="text-sm text-[#3D3832]/75 font-light leading-[1.8] text-balance">
+            <%= user.bio || 'I specialize in luxury destination bridal makeup — from Santorini sunsets to Lake Como shores. Every bride deserves a look that honors her story and the place she chooses to begin her forever.' %>
+          </p>
+        </div>
+        <div>
+          <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&q=80&fit=crop" alt="Luxury wedding detail" class="w-full aspect-[4/3] object-cover rounded-2xl" style="box-shadow:0 8px 30px rgba(232,213,183,0.25);" loading="lazy" />
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3 mt-10">
+        <div class="stat-card reveal">
+          <p class="stat-num">50+</p>
+          <p class="stat-lbl">Weddings</p>
+        </div>
+        <div class="stat-card reveal">
+          <p class="stat-num">12</p>
+          <p class="stat-lbl">Countries</p>
+        </div>
+        <div class="stat-card reveal">
+          <p class="stat-num">8</p>
+          <p class="stat-lbl">Years</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== DESTINATIONS ====== -->
+  <section class="dest" id="destinations">
+    <div class="orb" style="width:340px;height:340px;background:radial-gradient(circle,rgba(232,213,183,0.07) 0%,transparent 70%);top:30%;right:-120px;" aria-hidden="true"></div>
+    <div class="container relative z-10">
+      <div class="reveal">
+        <p class="sec-label">Travel Portfolio</p>
+        <h2 class="sec-title mt-1">Destinations</h2>
+        <div class="c-rule-sm"></div>
+        <p class="text-sm text-[#7A6E61] font-light max-w-xs text-balance mt-0">I travel to the world's most iconic locations to make your wedding day unforgettable.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-8 reveal" data-delay="150">
+        <span class="dest-pill">Santorini</span>
+        <span class="dest-pill">Lake Como</span>
+        <span class="dest-pill">Tuscany</span>
+        <span class="dest-pill">Maldives</span>
+        <span class="dest-pill">Bali</span>
+        <span class="dest-pill">Swiss Alps</span>
+        <span class="dest-pill">Amalfi Coast</span>
+        <span class="dest-pill">Tulum</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SERVICES ====== -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="reveal">
+        <p class="sec-label">Investments</p>
+        <h2 class="sec-title mt-1">Services &amp; Pricing</h2>
+        <div class="c-rule-sm"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-2">
+        <% if (user.services && user.services.length) { %>
+          <% user.services.forEach(function(s) { %>
+          <div class="svc-card reveal">
+            <p class="svc-name"><%= s.name %></p>
+            <% if (s.desc) { %><p class="svc-desc"><%= s.desc %></p><% } %>
+            <span class="price-pill"><%= s.price || 'On request' %></span>
+          </div>
+          <% }) %>
+        <% } else { %>
+        <div class="svc-card reveal">
+          <p class="svc-name">Destination Bridal</p>
+          <p class="svc-desc">Complete bridal look including pre-wedding trial at your destination.</p>
+          <span class="price-pill">From €1,200</span>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Engagement Session</p>
+          <p class="svc-desc">Roka, sangeet, or garden party. Soft, romantic glam.</p>
+          <span class="price-pill">From €800</span>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Pre-Wedding Editorial</p>
+          <p class="svc-desc">Save-the-date shoots with full creative direction.</p>
+          <span class="price-pill">From €900</span>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Bridal Party</p>
+          <p class="svc-desc">Group packages for bridesmaids and family.</p>
+          <span class="price-pill">From €350 ea</span>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== GALLERY ====== -->
+  <section class="gallery-sec" id="gallery">
+    <div class="container">
+      <div class="reveal">
+        <p class="sec-label">Portfolio</p>
+        <h2 class="sec-title mt-1">Selected Work</h2>
+        <div class="c-rule-sm"></div>
+      </div>
+      <div class="g-wrap reveal" data-delay="150">
+        <div class="g-scroll" id="g-scroll">
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80&fit=crop" alt="Bridal destination look" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1529636798458-92182bd6623c?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1529636798458-92182bd6623c?w=600&q=80&fit=crop" alt="Soft glam bridal" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1510076857177-7470076d4098?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1510076857177-7470076d4098?w=600&q=80&fit=crop" alt="Makeup detail" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1470162656549-da9c2942523a?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1470162656549-da9c2942523a?w=600&q=80&fit=crop" alt="Traditional elegance" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=600&q=80&fit=crop" alt="Full transformation" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=600&q=80&fit=crop" alt="Destination wedding" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1522413452208-996ff3f3e739?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1522413452208-996ff3f3e739?w=600&q=80&fit=crop" alt="Romantic bridal" loading="lazy" />
+          </div>
+          <div class="g-item" data-full="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80&fit=crop" alt="Editorial bridal" loading="lazy" />
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-1 mt-3 pr-1" aria-hidden="true">
+          <div class="w-1.5 h-1.5 rounded-full bg-[#B89B71]/40"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-[#B89B71]/25"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-[#B89B71]/10"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
+    <button class="lb-close" id="lb-close" aria-label="Close lightbox">&times;</button>
+    <img src="" alt="" id="lb-img" />
+  </div>
+
+  <!-- ====== TESTIMONIALS ====== -->
+  <section class="testimonials" id="testimonials">
+    <div class="orb" style="width:300px;height:300px;background:radial-gradient(circle,rgba(232,213,183,0.1) 0%,transparent 70%);bottom:-80px;right:-80px;" aria-hidden="true"></div>
+    <div class="container relative z-10">
+      <div class="reveal">
+        <p class="sec-label">Kind Words</p>
+        <h2 class="sec-title mt-1">Brides &amp; Press</h2>
+        <div class="c-rule-sm"></div>
+      </div>
+      <div class="mt-8 reveal" data-delay="150">
+        <div class="t-card">
+          <p class="t-text">"She didn't just do my makeup — she understood exactly the story I wanted my Lake Como wedding to tell. Every photo was art."</p>
+          <p class="t-author">Aisha K. — Bride · Lake Como 2024</p>
+        </div>
+        <div class="t-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="t-card">
+          <p class="t-text">"We renewed our vows in Santorini and the makeup stayed flawless through tears, wind, and golden hour. I've never felt more beautiful."</p>
+          <p class="t-author">Priya M. — Bride · Santorini 2024</p>
+        </div>
+        <div class="t-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="t-card">
+          <p class="t-text">"Featured our bridal work in the magazine spread because of her incredible editorial eye. She's the destination bridal MUA the world deserves."</p>
+          <p class="t-author">Sophie R. — Editor · Vogue Middle East</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== AVAILABILITY ====== -->
+  <section class="avail" id="availability">
+    <div class="container">
+      <div class="reveal">
+        <p class="sec-label">Calendar</p>
+        <h2 class="sec-title mt-1">Open Dates for<br />Destination Bookings</h2>
+        <div class="c-rule-sm"></div>
+        <div class="flex items-center gap-2 mt-0 mb-5">
+          <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+          <p class="text-xs text-[#7A6E61] tracking-wide">Open for 2026 inquiries</p>
+        </div>
+      </div>
+      <div class="reveal" data-delay="150">
+        <div class="dates-row">
+          <div class="d-card"><p class="d-month">Mar</p><p class="d-day">14</p><p class="d-loc">Amalfi</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Apr</p><p class="d-day">02</p><p class="d-loc">Santorini</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">May</p><p class="d-day">18</p><p class="d-loc">Lake Como</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Jun</p><p class="d-day">08</p><p class="d-loc">Tuscany</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Jul</p><p class="d-day">22</p><p class="d-loc">Maldives</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Aug</p><p class="d-day">05</p><p class="d-loc">Bali</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Sep</p><p class="d-day">19</p><p class="d-loc">Zermatt</p><p class="d-status">Open</p></div>
+          <div class="d-card"><p class="d-month">Oct</p><p class="d-day">07</p><p class="d-loc">Capri</p><p class="d-status">Open</p></div>
+        </div>
+        <p class="text-center text-xs text-[#7A6E61] mt-3 font-light">Scroll for more — all destinations available upon request</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONTACT ====== -->
+  <section class="contact-sec" id="contact">
+    <div class="container">
+      <div class="reveal">
+        <p class="sec-label">Get in Touch</p>
+        <h2 class="sec-title mt-1">Let's Connect</h2>
+        <div class="c-rule-sm"></div>
+      </div>
+      <div class="mt-8 reveal" data-delay="150">
+        <% if (user.social && user.social.phone) { %>
+        <a href="tel:<%= user.social.phone %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><p class="c-label">Phone</p><p class="c-val"><%= user.social.phone %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.whatsapp) { %>
+        <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'd%20love%20to%20inquire%20about%20destination%20bridal%20makeup%20services." target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon" style="background:#fff;border:1.5px solid #E8D5B7;"><svg viewBox="0 0 24 24" fill="#B89B71"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg></div>
+          <div><p class="c-label">WhatsApp</p><p class="c-val">Chat directly — quick replies</p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.instagram) { %>
+        <a href="https://instagram.com/<%= user.social.instagram.replace(/^@/, '') %>" target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#3D3832" stroke="none"/></svg></div>
+          <div><p class="c-label">Instagram</p><p class="c-val">@<%= user.social.instagram.replace(/^@/, '') %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.email) { %>
+        <a href="mailto:<%= user.social.email %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+          <div><p class="c-label">Email</p><p class="c-val"><%= user.social.email %></p></div>
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== BOOKING FORM ====== -->
+  <section class="booking-sec" id="booking">
+    <div class="container">
+      <div class="reveal">
+        <p class="sec-label">Inquire</p>
+        <h2 class="sec-title mt-1">Start Your Journey</h2>
+        <div class="c-rule-sm"></div>
+      </div>
+      <form action="/booking/<%= user.username %>" method="POST" class="mt-2 reveal" data-delay="150" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="grid gap-4">
+          <div>
+            <label class="f-label" for="full_name">Full Name <span>*</span></label>
+            <input class="f-input" type="text" id="full_name" name="full_name" placeholder="Your full name" required autocomplete="name" />
+          </div>
+          <div>
+            <label class="f-label" for="email">Email <span>*</span></label>
+            <input class="f-input" type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
+          </div>
+          <div>
+            <label class="f-label" for="phone">Phone <span>*</span></label>
+            <input class="f-input" type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="tel" />
+          </div>
+          <div>
+            <label class="f-label" for="event_date">Event Date</label>
+            <input class="f-input" type="date" id="event_date" name="event_date" min="<%= new Date().toISOString().split('T')[0] %>" />
+          </div>
+          <div>
+            <label class="f-label" for="destination">Destination / Venue</label>
+            <input class="f-input" type="text" id="destination" name="destination" placeholder="e.g. Santorini, Greece" />
+          </div>
+          <div>
+            <label class="f-label" for="event_type">Event Type</label>
+            <select class="f-select" id="event_type" name="event_type">
+              <option value="" disabled selected>Select type</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Engagement">Engagement</option>
+              <option value="Pre-wedding">Pre-wedding</option>
+              <option value="Honeymoon">Honeymoon</option>
+              <option value="Fashion">Fashion / Editorial</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label" for="guests">Estimated Guests</label>
+            <select class="f-select" id="guests" name="guests">
+              <option value="" disabled selected>Select size</option>
+              <% for (let i = 1; i <= 50; i++) { %><option value="<%= i %>"><%= i %></option><% } %>
+              <option value="50+">50+</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label" for="message">Message</label>
+            <textarea class="f-textarea" id="message" name="message" placeholder="Tell me about your dream wedding day, chosen location, and the look you imagine..."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-fill mt-5 w-full justify-center" style="padding: 15px 28px; font-size: 0.85rem;">Inquire Now</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="container">
+      <p>&copy; <%= new Date().getFullYear() %> <%= user.name %> — Destination Bridal Makeup</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <% if (user.social && user.social.whatsapp) { %>
+  <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'd%20love%20to%20inquire%20about%20destination%20bridal%20makeup%20services." target="_blank" rel="noopener" class="wa-fab" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+  <% } %>
+
+  <!-- JS -->
+  <script>
+    (function() {
+      'use strict';
+
+      // Reveal via IntersectionObserver
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.reveal');
+
+      if (reducedMotion) {
+        reveals.forEach(function(el) { el.classList.add('visible'); });
+      } else if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              var d = parseInt(e.target.dataset.delay || '0', 10);
+              setTimeout(function() { e.target.classList.add('visible'); }, d);
+              observer.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { observer.observe(el); });
+      } else {
+        reveals.forEach(function(el) { el.classList.add('visible'); });
+      }
+
+      // Lightbox
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lb-img');
+      var lbClose = document.getElementById('lb-close');
+
+      document.querySelectorAll('.g-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          lbImg.src = item.getAttribute('data-full') || item.querySelector('img').src;
+          lbImg.alt = item.querySelector('img').alt || 'Gallery image';
+          lb.classList.add('open');
+          lb.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      function closeLb() {
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        setTimeout(function() { lbImg.src = ''; }, 300);
+      }
+
+      lbClose.addEventListener('click', closeLb);
+      lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lb.classList.contains('open')) closeLb(); });
+
+      // Set min date for date inputs
+      var today = new Date().toISOString().split('T')[0];
+      document.querySelectorAll('input[type="date"]').forEach(function(inp) { inp.min = today; });
+    })();
+  </script>
+</body>
+</html>

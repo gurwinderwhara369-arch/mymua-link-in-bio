@@ -6,5 +6,8 @@ public/uploads/*
 !public/uploads/.gitkeep
 backups/*
 !backups/.gitkeep
+dist/
+__pycache__/
+*.pyc
 *.log
 .DS_Store

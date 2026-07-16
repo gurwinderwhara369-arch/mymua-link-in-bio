@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" black-translucent" />
+  <meta name="description" content="<%= user.bio ? user.bio.slice(0, 160) : user.name + ' — Event & Party Makeup Artist for sangeet, cocktail, and luxury celebrations.' %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title><%= user.name %> — Event & Party Makeup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0A0A0B;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+
+    .wrap { max-width: 480px; margin: 0 auto; padding: 0 20px; position: relative; }
+
+    /* Sparkle particles */
+    .sparkles { position: fixed; pointer-events: none; inset: 0; z-index: 0; overflow: hidden; }
+    .sparkle {
+      position: absolute; border-radius: 50%; background: #FFD700; opacity: 0;
+      animation: sparkleFloat var(--dur, 16s) var(--del, 0s) linear infinite;
+    }
+    @keyframes sparkleFloat {
+      0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+      15%  { opacity: 0.9; }
+      50%  { opacity: 0.5; transform: translate(var(--dx), var(--dy)) scale(1); }
+      100% { transform: translate(calc(var(--dx) * 1.5), calc(var(--dy) - 60px)) scale(0); opacity: 0; }
+    }
+
+    /* Glitter noise */
+    .glitter-overlay {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.03; mix-blend-mode: overlay;
+    }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .sparkles { display: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* Pulse glow CTA */
+    @keyframes pulseGold {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15); }
+      50%       { box-shadow: 0 0 32px rgba(255,215,0,0.65), 0 0 64px rgba(255,215,0,0.3); }
+    }
+    .pulse-glow { animation: pulseGold 2.5s ease-in-out infinite; }
+
+    /* Hero letter spacing animation */
+    @keyframes letterReveal {
+      from { letter-spacing: 0.18em; opacity: 0.7; }
+      to   { letter-spacing: 0.04em; opacity: 1; }
+    }
+    .hero-title { animation: letterReveal 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    /* Section label */
+    .sec-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FFD700; font-weight: 500; margin-bottom: 6px; }
+    .sec-title { font-family: 'Cinzel', serif; font-weight: 600; font-size: 1.85rem; color: #FFF; line-height: 1.15; }
+    .gold-rule { height: 2px; background: linear-gradient(90deg, #FFD700, #8B5CF6, transparent); border-radius: 1px; }
+    .gold-rule-sm { width: 40px; height: 2px; background: #FFD700; margin: 0 auto 24px; border-radius: 1px; }
+
+    /* Hero */
+    .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1533174072545-e8d4aa97edf6?w=800&q=80&fit=crop') center/cover no-repeat; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,11,0.45) 0%, rgba(10,10,11,0.95) 85%); }
+    .hero-body { position: relative; z-index: 2; text-align: center; padding: 80px 20px 100px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: #A0A0A0; margin-bottom: 14px; font-weight: 400; }
+    .hero-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(2rem, 8vw, 2.8rem); color: #FFF; line-height: 1.1; }
+    .hero-tagline { font-size: 0.9rem; color: #A0A0A0; margin-top: 14px; font-style: italic; font-weight: 300; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 32px; }
+    .btn {
+      display: inline-flex; align-items: center; padding: 13px 28px; border-radius: 9999px;
+      font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; cursor: pointer; border: 2px solid transparent; transition: all 0.25s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-gold { background: #FFD700; color: #0A0A0B; border-color: #FFD700; font-weight: 600; }
+    .btn-gold:hover { background: #E8C400; box-shadow: 0 6px 28px rgba(255,215,0,0.5); }
+    .btn-ghost { background: transparent; color: #FFD700; border-color: rgba(255,215,0,0.5); }
+    .btn-ghost:hover { background: rgba(255,215,0,0.08); border-color: #FFD700; }
+
+    /* Scroll hint */
+    .scroll-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 2; animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    /* Stats */
+    .stats-bar { border-top: 1px solid rgba(255,215,0,0.15); border-bottom: 1px solid rgba(255,215,0,0.15); padding: 20px 0; background: rgba(26,26,29,0.6); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .stat-block { text-align: center; border-right: 1px solid rgba(255,215,0,0.12); padding: 6px 8px; }
+    .stat-block:last-child { border-right: none; }
+    .stat-num { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; color: #FFD700; }
+    .stat-lbl { font-size: 0.65rem; color: #A0A0A0; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
+
+    /* About */
+    .about { padding: 70px 0; background: #0A0A0B; position: relative; }
+    .about-card { background: #1A1A1D; border: 1px solid rgba(255,215,0,0.15); border-radius: 20px; padding: 24px 20px; }
+    .about-card blockquote { font-family: 'Cinzel', serif; font-style: italic; font-weight: 400; font-size: 1.05rem; color: #FFD700; line-height: 1.6; }
+    .event-pill { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.04em; }
+    .pill-violet { background: rgba(139,92,246,0.2); color: #A78BFA; border: 1px solid rgba(139,92,246,0.35); }
+    .pill-gold { background: rgba(255,215,0,0.12); color: #FFD700; border: 1px solid rgba(255,215,0,0.3); }
+
+    /* Services */
+    .services { padding: 70px 0; background: #0A0A0B; }
+    .svc-card {
+      background: #1A1A1D; border: 1px solid rgba(255,215,0,0.12); border-radius: 20px;
+      padding: 18px 16px; transition: all 0.3s;
+    }
+    .svc-card:hover { transform: translateY(-4px); border-color: rgba(255,215,0,0.35); box-shadow: 0 8px 30px rgba(255,215,0,0.1); }
+    .svc-name { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.95rem; color: #FFF; margin-bottom: 4px; }
+    .svc-desc { font-size: 0.78rem; color: #A0A0A0; font-weight: 300; line-height: 1.55; margin-bottom: 10px; }
+    .svc-price { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.9rem; color: #FFD700; }
+
+    /* Gallery filmstrip */
+    .gallery-sec { padding: 70px 0; background: #0A0A0B; position: relative; overflow: hidden; }
+    .g-film {
+      display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch; padding: 4px 4px 12px; scrollbar-width: none;
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+    .g-film::-webkit-scrollbar { display: none; }
+    .g-frame {
+      flex: 0 0 auto; width: 78%; aspect-ratio: 16/9; scroll-snap-align: start;
+      border-radius: 14px; overflow: hidden; cursor: pointer; position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: transform 0.3s;
+    }
+    .g-frame:hover { transform: scale(1.03); }
+    .g-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .g-frame::after {
+      content: ''; position: absolute; inset: 0; border-radius: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,215,0,0.15); pointer-events: none;
+    }
+
+    /* Lightbox */
+    .lb {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      align-items: center; justify-content: center; background: rgba(5,5,6,0.95);
+      backdrop-filter: blur(14px); padding: 20px;
+    }
+    .lb.open { display: flex; }
+    .lb img { max-width: 100%; max-height: 82dvh; border-radius: 16px; object-fit: contain; animation: lbIn 0.35s ease; }
+    @keyframes lbIn { from { opacity: 0; transform: scale(0.93); } to { opacity: 1; transform: scale(1); } }
+    .lb-close {
+      position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,215,0,0.35); color: #FFD700;
+      font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .lb-close:hover { background: rgba(255,215,0,0.2); }
+
+    /* Testimonials */
+    .testimonials { padding: 70px 0; background: #1A1A1D; }
+    .t-card {
+      background: #0A0A0B; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid #FFD700;
+      border-radius: 0 16px 16px 0; padding: 20px 22px; margin-bottom: 14px;
+    }
+    .t-text { font-weight: 300; font-style: italic; font-size: 0.88rem; color: #FFF; line-height: 1.75; }
+    .t-author { font-size: 0.7rem; color: #FFD700; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px; font-weight: 500; }
+    .t-event { font-size: 0.65rem; color: #A78BFA; letter-spacing: 0.04em; margin-top: 2px; }
+
+    /* Availability */
+    .avail { padding: 70px 0; background: #0A0A0B; }
+    .date-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .date-row::-webkit-scrollbar { display: none; }
+    .date-card {
+      flex: 0 0 auto; background: #1A1A1D; border: 1px solid rgba(255,215,0,0.2); border-radius: 18px;
+      padding: 16px 18px; text-align: center; min-width: 80px; transition: all 0.25s;
+    }
+    .date-card:hover { border-color: rgba(255,215,0,0.5); transform: translateY(-3px); box-shadow: 0 4px 20px rgba(255,215,0,0.15); }
+    .d-day { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #FFD700; }
+    .d-month { font-size: 0.65rem; color: #A0A0A0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .d-status { font-size: 0.65rem; color: #4ade80; margin-top: 6px; font-weight: 500; }
+
+    /* Contact */
+    .contact-sec { padding: 70px 0; background: #1A1A1D; }
+    .c-row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      background: #0A0A0B; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+      margin-bottom: 10px; transition: all 0.25s; text-decoration: none; color: inherit;
+    }
+    .c-row:hover { border-color: rgba(139,92,246,0.35); box-shadow: 0 0 20px rgba(139,92,246,0.08); }
+    .c-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(139,92,246,0.15);
+      border: 1px solid rgba(139,92,246,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .c-icon svg { width: 18px; height: 18px; stroke: #A78BFA; fill: none; stroke-width: 1.5; }
+    .c-label { font-size: 0.65rem; color: #A0A0A0; letter-spacing: 0.06em; text-transform: uppercase; }
+    .c-val { font-size: 0.85rem; color: #FFF; margin-top: 1px; }
+
+    /* Form */
+    .booking-sec { padding: 70px 0; background: #0A0A0B; }
+    .f-label { display: block; font-size: 0.72rem; font-weight: 500; color: #A0A0A0; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .f-label span { color: #FFD700; }
+    .f-input, .f-select, .f-textarea {
+      width: 100%; padding: 14px 16px; background: #1A1A1D; border: 1.5px solid rgba(255,215,0,0.2);
+      border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 300;
+      color: #FFF; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-input::placeholder, .f-textarea::placeholder { color: #555; }
+    .f-input:focus, .f-select:focus, .f-textarea:focus { border-color: #FFD700; box-shadow: 0 0 0 3px rgba(255,215,0,0.12); }
+    .f-textarea { resize: vertical; min-height: 100px; }
+    .f-select {
+      appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B5CF6' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
+    }
+    .f-select option { background: #1A1A1D; color: #FFF; }
+
+    /* WhatsApp FAB */
+    .wa-fab {
+      position: fixed; bottom: 22px; right: 22px; z-index: 50;
+      width: 56px; height: 56px; border-radius: 50%; background: #25D366;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.45); display: flex; align-items: center;
+      justify-content: center; text-decoration: none; transition: transform 0.2s;
+    }
+    .wa-fab:hover { transform: scale(1.08); }
+    .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+
+    /* Footer */
+    footer { text-align: center; padding: 22px 0; border-top: 1px solid rgba(255,215,0,0.15); background: #0A0A0B; }
+    footer p { font-size: 0.7rem; color: #666; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body class="bg-[#0A0A0B] text-[#FFFFFF] min-h-dvh overflow-x-hidden">
+
+  <!-- Sparkle particles -->
+  <div class="sparkles" aria-hidden="true">
+    <span class="sparkle" style="left:8%;top:15%;--dx:35px;--dy:-130px;--dur:16s;--del:0s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:18%;top:25%;--dx:70px;--dy:-60px;--dur:20s;--del:3s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:28%;top:10%;--dx:-25px;--dy:-110px;--dur:18s;--del:6s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:40%;top:30%;--dx:55px;--dy:-45px;--dur:22s;--del:1s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:52%;top:18%;--dx:-45px;--dy:-90px;--dur:17s;--del:4s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:62%;top:35%;--dx:65px;--dy:-55px;--dur:21s;--del:7s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:75%;top:12%;--dx:-15px;--dy:-120px;--dur:19s;--del:2s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:85%;top:40%;--dx:80px;--dy:-35px;--dur:16s;--del:5s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:10%;top:55%;--dx:-50px;--dy:-80px;--dur:23s;--del:8s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:35%;top:60%;--dx:40px;--dy:-70px;--dur:15s;--del:3.5s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:55%;top:50%;--dx:-30px;--dy:-100px;--dur:20s;--del:6.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:70%;top:65%;--dx:60px;--dy:-40px;--dur:18s;--del:2.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:90%;top:45%;--dx:-20px;--dy:-95px;--dur:22s;--del:9s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:5%;top:75%;--dx:45px;--dy:-50px;--dur:17s;--del:4.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:22%;top:80%;--dx:-35px;--dy:-85px;--dur:21s;--del:7.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:48%;top:72%;--dx:25px;--dy:-65px;--dur:19s;--del:1.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:68%;top:78%;--dx:-55px;--dy:-45px;--dur:16s;--del:5.5s;width:3px;height:3px;"></span>
+    <span class="sparkle" style="left:82%;top:68%;--dx:15px;--dy:-75px;--dur:23s;--del:8.5s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:95%;top:58%;--dx:-40px;--dy:-55px;--dur:18s;--del:3s;width:2px;height:2px;"></span>
+    <span class="sparkle" style="left:15%;top:40%;--dx:50px;--dy:-90px;--dur:20s;--del:6s;width:2px;height:2px;"></span>
+  </div>
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" id="home">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <svg class="absolute top-5 left-5 opacity-20 hidden sm:block" width="60" height="60" viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="#FFD700"/></svg>
+    <svg class="absolute bottom-16 right-8 opacity-15 hidden sm:block" width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="#FFD700"/></svg>
+    <div class="hero-body">
+      <p class="hero-eyebrow">Event &amp; Party Makeup Artist</p>
+      <h1 class="hero-name hero-title"><%= user.name %></h1>
+      <p class="hero-tagline">Night. Lights. Your moment.</p>
+      <div class="hero-ctas">
+        <a href="#gallery" class="btn btn-gold pulse-glow">Book Your Event</a>
+        <a href="#gallery" class="btn btn-ghost">View Gallery</a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/></svg>
+    </div>
+  </section>
+
+  <!-- ====== STATS ====== -->
+  <section class="stats-bar">
+    <div class="wrap">
+      <div class="stats-grid">
+        <div class="stat-block"><p class="stat-num">200+</p><p class="stat-lbl">Events</p></div>
+        <div class="stat-block"><p class="stat-num">6</p><p class="stat-lbl">Years</p></div>
+        <div class="stat-block"><p class="stat-num">15+</p><p class="stat-lbl">Cities</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ABOUT ====== -->
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">The Artist</p>
+        <h2 class="sec-title mt-1">Glamour,<br/>Guaranteed.</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <div class="about-card reveal" data-delay="150">
+        <blockquote>"Makeup isn't about covering up — it's about revealing the boldest, most unforgettable version of you."</blockquote>
+        <p class="text-sm text-[#A0A0A0] font-light leading-relaxed mt-4">
+          <%= user.bio || 'I specialize in party, sangeet, and luxury event makeup. From intimate gatherings to grand celebrations, I bring high-energy glamour that photographs flawlessly and lasts till the last dance.' %>
+        </p>
+      </div>
+      <div class="reveal" data-delay="200">
+        <p class="text-xs text-[#888] tracking-wide uppercase mt-6 mb-3 font-medium">Specialties</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="event-pill pill-violet">Sangeet Night</span>
+          <span class="event-pill pill-violet">Cocktail Reception</span>
+          <span class="event-pill pill-gold">Wedding Reception</span>
+          <span class="event-pill pill-violet">Rooftop Party</span>
+          <span class="event-pill pill-gold">Birthday Glam</span>
+          <span class="event-pill pill-violet">Fashion Show</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SERVICES ====== -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Services</p>
+        <h2 class="sec-title mt-1">Event<br/>Packages</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="svc-card reveal">
+          <p class="svc-name">Sangeet Night</p>
+          <p class="svc-desc">Smokey eyes, bold lips, statement glam for the dance floor.</p>
+          <p class="svc-price">₹12K+</p>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Cocktail Reception</p>
+          <p class="svc-desc">Soft glam meets high-shine. Camera-ready luminosity.</p>
+          <p class="svc-price">₹10K+</p>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Wedding Reception</p>
+          <p class="svc-desc">HD airbrush finish with jewelry-complementing tones.</p>
+          <p class="svc-price">₹18K+</p>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Rooftop / Party</p>
+          <p class="svc-desc">Night-optimized glam with long-wear, smudge-proof formula.</p>
+          <p class="svc-price">₹8K+</p>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Birthday Glam</p>
+          <p class="svc-desc">Custom themed looks. Golden hour to party night.</p>
+          <p class="svc-price">₹6K+</p>
+        </div>
+        <div class="svc-card reveal">
+          <p class="svc-name">Corporate Gala</p>
+          <p class="svc-desc">Polished, powerful, polished. Boardroom to ballroom.</p>
+          <p class="svc-price">₹9K+</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== GALLERY ====== -->
+  <section class="gallery-sec" id="gallery">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Portfolio</p>
+        <h2 class="sec-title mt-1">The Night<br/>Collection</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <div class="reveal" data-delay="150">
+        <div class="g-film" id="g-film">
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80&fit=crop" alt="Party makeup" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80&fit=crop" alt="Night event glam" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80&fit=crop" alt="Celebration glam" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80&fit=crop" alt="Concert glam" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1459749411177-0473ef716175?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1459749411177-0473ef716175?w=600&q=80&fit=crop" alt="Sangeet night" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80&fit=crop" alt="Cocktail party" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=80&fit=crop" alt="Night out glam" loading="lazy" />
+          </div>
+          <div class="g-frame" data-full="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200&q=80&fit=crop">
+            <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=600&q=80&fit=crop" alt="VIP event" loading="lazy" />
+          </div>
+        </div>
+        <p class="text-center text-xs text-[#666] mt-3 tracking-wide">← Swipe to explore →</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
+    <button class="lb-close" id="lb-close" aria-label="Close lightbox">✕</button>
+    <img src="" alt="" id="lb-img" />
+  </div>
+
+  <!-- ====== TESTIMONIALS ====== -->
+  <section class="testimonials" id="testimonials">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Kind Words</p>
+        <h2 class="sec-title mt-1">What Clients<br/>Say</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <div class="reveal" data-delay="150">
+        <div class="t-card">
+          <p class="t-text">"She did my sangeet makeup and I got more compliments than the bride! The smokey eye stayed put through 6 hours of dancing. Absolute queen."</p>
+          <p class="t-author">Priya S.</p>
+          <p class="t-event">Sangeet Night · Mumbai 2025</p>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Booked her for my birthday rooftop party. The makeup was flawless under every neon light. Photos came out magazine-worthy."</p>
+          <p class="t-author">Anika R.</p>
+          <p class="t-event">Birthday Glam · Delhi 2025</p>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"She's my go-to for every corporate gala. Polished, powerful, and the HD finish photographs like magic under stage lights."</p>
+          <p class="t-author">Kavya M.</p>
+          <p class="t-event">Corporate Gala · Bangalore 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== AVAILABILITY ====== -->
+  <section class="avail" id="availability">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Calendar</p>
+        <h2 class="sec-title mt-1">Next Available<br/>Dates</h2>
+        <div class="gold-rule-sm"></div>
+        <div class="flex items-center gap-2 mb-5">
+          <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+          <p class="text-xs text-[#A0A0A0] tracking-wide">Accepting bookings for 2026 season</p>
+        </div>
+      </div>
+      <div class="reveal date-row" data-delay="150">
+        <div class="date-card"><p class="d-day">08</p><p class="d-month">Jul</p><p class="d-status">Open</p></div>
+        <div class="date-card"><p class="d-day">15</p><p class="d-month">Jul</p><p class="d-status">Open</p></div>
+        <div class="date-card"><p class="d-day">22</p><p class="d-month">Jul</p><p class="d-status">Open</p></div>
+        <div class="date-card"><p class="d-day">05</p><p class="d-month">Aug</p><p class="d-status">Open</p></div>
+        <div class="date-card"><p class="d-day">12</p><p class="d-month">Aug</p><p class="d-status">Open</p></div>
+        <div class="date-card"><p class="d-day">19</p><p class="d-month">Aug</p><p class="d-status">Open</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONTACT ====== -->
+  <section class="contact-sec" id="contact">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Get In Touch</p>
+        <h2 class="sec-title mt-1">Let's<br/>Connect</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <div class="reveal mt-6" data-delay="150">
+        <% if (user.social && user.social.phone) { %>
+        <a href="tel:<%= user.social.phone %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><p class="c-label">Phone</p><p class="c-val"><%= user.social.phone %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.whatsapp) { %>
+        <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'd%20love%20to%20inquire%20about%20event%20makeup%20services." target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon" style="background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.35);"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg></div>
+          <div><p class="c-label">WhatsApp</p><p class="c-val">Quick replies</p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.instagram) { %>
+        <a href="https://instagram.com/<%= user.social.instagram %>" target="_blank" rel="noopener" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#A78BFA" stroke="none"/></svg></div>
+          <div><p class="c-label">Instagram</p><p class="c-val">@<%= user.social.instagram %></p></div>
+        </a>
+        <% } %>
+        <% if (user.social && user.social.email) { %>
+        <a href="mailto:<%= user.social.email %>" class="c-row">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+          <div><p class="c-label">Email</p><p class="c-val"><%= user.social.email %></p></div>
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== BOOKING FORM ====== -->
+  <section class="booking-sec" id="booking">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="sec-label">Reserve</p>
+        <h2 class="sec-title mt-1">Reserve<br/>Your Date</h2>
+        <div class="gold-rule-sm"></div>
+      </div>
+      <form action="/booking/<%= user.username %>" method="POST" class="reveal mt-2" data-delay="150" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="grid gap-4">
+          <div>
+            <label class="f-label" for="full_name">Full Name <span>*</span></label>
+            <input class="f-input" type="text" id="full_name" name="full_name" placeholder="Your full name" required autocomplete="name" />
+          </div>
+          <div>
+            <label class="f-label" for="email">Email <span>*</span></label>
+            <input class="f-input" type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
+          </div>
+          <div>
+            <label class="f-label" for="phone">Phone <span>*</span></label>
+            <input class="f-input" type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required autocomplete="tel" />
+          </div>
+          <div>
+            <label class="f-label" for="event_date">Event Date</label>
+            <input class="f-input" type="date" id="event_date" name="event_date" min="<%= new Date().toISOString().split('T')[0] %>" />
+          </div>
+          <div>
+            <label class="f-label" for="event_type">Event Type</label>
+            <select class="f-select" id="event_type" name="event_type">
+              <option value="" disabled selected>Select type</option>
+              <option value="Sangeet">Sangeet</option>
+              <option value="Cocktail">Cocktail Reception</option>
+              <option value="Wedding Reception">Wedding Reception</option>
+              <option value="Birthday">Birthday / Party</option>
+              <option value="Corporate">Corporate Gala</option>
+              <option value="Fashion Show">Fashion Show</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label" for="venue">Venue / Location</label>
+            <input class="f-input" type="text" id="venue" name="venue" placeholder="e.g. The Grand, Mumbai" />
+          </div>
+          <div>
+            <label class="f-label" for="guests">Guest Count</label>
+            <select class="f-select" id="guests" name="guests">
+              <option value="" disabled selected>Select size</option>
+              <% for (let i = 1; i <= 50; i++) { %><option value="<%= i %>"><%= i %></option><% } %>
+              <option value="50+">50+</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label" for="message">Message</label>
+            <textarea class="f-textarea" id="message" name="message" placeholder="Tell me about your event, theme, and the look you imagine..." rows="3"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold mt-5 w-full justify-center" style="padding:15px 28px;">Book Now</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="wrap">
+      <p>&copy; <%= new Date().getFullYear() %> <%= user.name %> — Night. Lights. Your moment.</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <% if (user.social && user.social.whatsapp) { %>
+  <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%2C%20I'd%20love%20to%20inquire%20about%20event%20makeup%20services." target="_blank" rel="noopener" class="wa-fab" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+  <% } %>
+
+  <script>
+    (function() {
+      'use strict';
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.reveal');
+
+      if (reduced) { reveals.forEach(function(el) { el.classList.add('visible'); }); }
+      else if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              var d = parseInt(e.target.dataset.delay || '0', 10);
+              setTimeout(function() { e.target.classList.add('visible'); }, d);
+              obs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { obs.observe(el); });
+      } else { reveals.forEach(function(el) { el.classList.add('visible'); }); }
+
+      // Lightbox
+      var lb = document.getElementById('lightbox'), lbImg = document.getElementById('lb-img'), lbCl = document.getElementById('lb-close');
+      document.querySelectorAll('.g-frame').forEach(function(frame) {
+        frame.addEventListener('click', function() {
+          lbImg.src = frame.dataset.full;
+          lbImg.alt = frame.querySelector('img').alt;
+          lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+      function closeLb() { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; setTimeout(function() { lbImg.src = ''; }, 300); }
+      lbCl.addEventListener('click', closeLb);
+      lb.addEventListener('click', function(e) { if (e.target === lb) closeLb(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lb.classList.contains('open')) closeLb(); });
+
+      document.querySelectorAll('input[type="date"]').forEach(function(inp) { inp.min = new Date().toISOString().split('T')[0]; });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0C0C0D" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="<%= user.bio ? user.bio.slice(0, 160) : user.name + ' — Editorial bridal makeup portfolio' %>" />
+    <title><%= user.name %> — Editorial Bridal Makeup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+      body { font-family: 'Inter', sans-serif; font-weight: 300; line-height: 1.6; background: #0C0C0D; color: #F5F0E8; min-height: 100dvh; overflow-x: hidden; }
+      img { display: block; max-width: 100%; }
+      a { color: inherit; text-decoration: none; }
+      button, input, select, textarea { font-family: inherit; font-size: inherit; }
+
+      .max-w-content { max-width: 480px; margin-left: auto; margin-right: auto; }
+
+      /* Grain overlay */
+      .grain-overlay::after {
+        content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.04;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        background-repeat: repeat; background-size: 256px 256px;
+      }
+
+      /* Gold divider ornament */
+      .gold-divider { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto; padding: 24px 0; }
+      .gold-divider::before, .gold-divider::after { content: ''; width: 60px; height: 1px; background: linear-gradient(to right, transparent, #C9A96E); }
+      .gold-divider::after { background: linear-gradient(to left, transparent, #C9A96E); }
+      .gold-divider-diamond { width: 6px; height: 6px; background: #C9A96E; transform: rotate(45deg); flex: none; }
+
+      /* Header */
+      #header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        background: rgba(12,12,13,0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(245,240,232,0.06); transition: all 0.5s ease;
+      }
+      #header .inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 20px; }
+      #header .logo { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; font-size: 0.95rem; color: #C9A96E; letter-spacing: 0.02em; }
+      #header nav { display: flex; align-items: center; gap: 2px; }
+      #header nav a { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 10px; color: rgba(245,240,232,0.4); border-radius: 4px; transition: color 0.3s; }
+      #header nav a:hover, #header nav a:focus { color: #F5F0E8; outline: none; }
+
+      /* Hero */
+      #hero { position: relative; min-height: 100dvh; display: flex; align-items: flex-end; padding: 0 20px 48px; overflow: hidden; }
+      #hero-bg {
+        position: absolute; inset: 0; z-index: 0;
+        background-image: url('https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=1200&q=85&fit=crop');
+        background-size: cover; background-position: center 30%;
+      }
+      #hero-overlay {
+        position: absolute; inset: 0; z-index: 1;
+        background: linear-gradient(180deg, rgba(12,12,13,0.3) 0%, rgba(12,12,13,0.88) 100%);
+      }
+      #hero-content { position: relative; z-index: 2; width: 100%; }
+      #hero-content h1 {
+        font-family: 'Playfair Display', serif; font-weight: 700; font-style: italic; font-size: clamp(2.2rem, 8vw, 3.2rem);
+        line-height: 1.15; color: #F5F0E8; letter-spacing: -0.01em;
+      }
+      #hero-content .subtitle { font-size: 0.9rem; font-weight: 300; color: rgba(245,240,232,0.7); margin-top: 8px; }
+      #hero-content .location { font-size: 0.75rem; font-weight: 400; color: #C9A96E; margin-top: 4px; display: flex; align-items: center; gap: 8px; }
+      #hero-content .location::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #C9A96E; flex: none; }
+      #hero-cta { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+      .btn-gold {
+        display: inline-flex; align-items: center; justify-content: center; padding: 12px 28px;
+        background: #C9A96E; color: #0C0C0D; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+        border: none; border-radius: 2px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 40px rgba(201,169,110,0.15);
+      }
+      .btn-gold:hover, .btn-gold:focus { background: #d4b87a; box-shadow: 0 0 60px rgba(201,169,110,0.25); transform: translateY(-1px); outline: none; }
+      .btn-outline {
+        display: inline-flex; align-items: center; justify-content: center; padding: 12px 28px;
+        background: transparent; color: #C9A96E; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+        border: 1px solid rgba(201,169,110,0.4); border-radius: 2px; cursor: pointer; transition: all 0.3s ease;
+      }
+      .btn-outline:hover, .btn-outline:focus { border-color: #C9A96E; background: rgba(201,169,110,0.08); outline: none; }
+      #scroll-indicator {
+        position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 2;
+        width: 1px; height: 36px; background: linear-gradient(to bottom, #C9A96E, transparent);
+        animation: scrollBounce 2s ease-in-out infinite;
+      }
+      @keyframes scrollBounce { 0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); } 50% { opacity: 1; transform: translateX(-50%) translateY(8px); } }
+
+      /* About */
+      #about { padding: 80px 20px; position: relative; overflow: hidden; }
+      #about-bg {
+        position: absolute; inset: 0; z-index: 0; opacity: 0.06;
+        background-image: url('https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=80&fit=crop');
+        background-size: cover; background-position: center;
+      }
+      #about-inner { position: relative; z-index: 1; }
+      .pull-quote {
+        font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(1.1rem, 4vw, 1.35rem);
+        line-height: 1.6; color: #F5F0E8; border-left: 3px solid #C9A96E; padding-left: 20px; margin: 0 auto; max-width: 420px;
+      }
+      .stats-row { display: flex; gap: 12px; margin-top: 32px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .stats-row::-webkit-scrollbar { display: none; }
+      .stat-card {
+        flex: 1; min-width: 100px; text-align: center; padding: 20px 14px;
+        background: rgba(26,26,28,0.85); border: 1px solid rgba(245,240,232,0.06); border-radius: 2px; backdrop-filter: blur(10px);
+        box-shadow: 0 0 30px rgba(201,169,110,0.04);
+      }
+      .stat-card .num { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #C9A96E; line-height: 1; }
+      .stat-card .lbl { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #8A8A8A; margin-top: 6px; }
+
+      /* Section headings */
+      .section-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #C9A96E; display: block; }
+      .section-title {
+        font-family: 'Playfair Display', serif; font-weight: 700; font-style: italic; font-size: clamp(1.6rem, 5vw, 2.2rem);
+        line-height: 1.15; color: #F5F0E8; margin-top: 8px;
+      }
+
+      /* Services */
+      #services { padding: 80px 20px; }
+      .service-card {
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        padding: 20px 24px; background: rgba(26,26,28,0.6); border-top: 2px solid #C9A96E;
+        border-left: 1px solid rgba(245,240,232,0.04); border-right: 1px solid rgba(245,240,232,0.04); border-bottom: 1px solid rgba(245,240,232,0.04);
+        border-radius: 2px; transition: all 0.4s ease; cursor: default;
+      }
+      .service-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 40px rgba(201,169,110,0.06); }
+      .service-card h3 { font-weight: 500; font-size: 0.9rem; color: #F5F0E8; }
+      .service-card p { font-size: 0.75rem; font-weight: 300; color: #8A8A8A; margin-top: 2px; }
+      .service-card .price { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; font-size: 1rem; color: #C9A96E; white-space: nowrap; }
+
+      /* Gallery */
+      #gallery { padding: 80px 20px; }
+      .gallery-masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
+      .gallery-item { border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; }
+      .gallery-item.full { grid-column: 1 / -1; }
+      .gallery-item img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+      .gallery-item.full img { aspect-ratio: 16/9; }
+      .gallery-item:hover img { transform: scale(1.04); filter: brightness(1.08); box-shadow: 0 0 0 2px rgba(201,169,110,0.4); }
+      .gallery-item:focus-visible { outline: 2px solid #C9A96E; outline-offset: 2px; }
+
+      /* Lightbox */
+      #lightbox {
+        position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center;
+        background: rgba(12,12,13,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 20px;
+      }
+      #lightbox.active { display: flex; }
+      #lightbox img { max-width: 100%; max-height: 80vh; border-radius: 8px; object-fit: contain; animation: lightboxIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      @keyframes lightboxIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+      #lightbox-close { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; background: rgba(26,26,28,0.8); border: 1px solid rgba(245,240,232,0.1); border-radius: 50%; color: #F5F0E8; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+      #lightbox-close:hover { background: rgba(201,169,110,0.2); border-color: #C9A96E; }
+
+      /* Testimonials */
+      #testimonials { padding: 80px 20px; }
+      .testimonial {
+        border-left: 3px solid #C9A96E; padding: 20px 0 20px 24px; margin-bottom: 24px;
+        position: relative;
+      }
+      .testimonial::after { content: ''; position: absolute; bottom: 0; left: 24px; right: 0; height: 1px; background: rgba(245,240,232,0.08); }
+      .testimonial:last-child::after { display: none; }
+      .testimonial blockquote {
+        font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(1rem, 3.5vw, 1.2rem);
+        line-height: 1.6; color: rgba(245,240,232,0.85);
+      }
+      .testimonial .client { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,240,232,0.5); margin-top: 10px; }
+      .testimonial .event { font-size: 0.7rem; font-weight: 300; color: #8A8A8A; margin-top: 2px; }
+
+      /* Availability */
+      #availability { padding: 80px 20px; }
+      .date-pills { display: flex; gap: 10px; overflow-x: auto; padding: 16px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
+      .date-pills::-webkit-scrollbar { display: none; }
+      .date-pill {
+        flex: 0 0 auto; padding: 10px 18px; border: 1px solid rgba(201,169,110,0.3); border-radius: 2px;
+        font-size: 0.75rem; font-weight: 400; color: #F5F0E8; background: rgba(12,12,13,0.6); white-space: nowrap; transition: all 0.3s;
+      }
+      .date-pill:hover { border-color: #C9A96E; background: rgba(201,169,110,0.08); }
+      .date-pill.booked { border-color: rgba(220,80,80,0.3); color: rgba(220,100,100,0.7); }
+      /* Calendar */
+      .mini-calendar { margin-top: 24px; background: rgba(26,26,28,0.5); border: 1px solid rgba(245,240,232,0.06); border-radius: 2px; padding: 20px; }
+      .cal-header { text-align: center; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #C9A96E; margin-bottom: 16px; }
+      .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+      .cal-grid .dow { text-align: center; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; padding: 4px; }
+      .cal-grid .day-cell { text-align: center; padding: 6px 2px; font-size: 0.75rem; border-radius: 2px; position: relative; color: #F5F0E8; }
+      .cal-grid .day-cell.empty { color: transparent; pointer-events: none; }
+      .cal-grid .day-cell.avail::after { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin: 3px auto 0; }
+      .cal-grid .day-cell.booked::after { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #dc5050; margin: 3px auto 0; }
+      .cal-grid .day-cell.past { color: rgba(138,138,138,0.3); }
+
+      /* Contact */
+      #contact { padding: 80px 20px; }
+      .contact-row {
+        display: flex; align-items: center; gap: 16px; padding: 18px 20px;
+        background: rgba(26,26,28,0.5); border-left: 2px solid rgba(201,169,110,0.4); border-top: 1px solid rgba(245,240,232,0.04);
+        border-bottom: 1px solid rgba(245,240,232,0.04); border-right: 1px solid rgba(245,240,232,0.04); border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+      .contact-row:hover { border-left-color: #C9A96E; box-shadow: 0 0 30px rgba(201,169,110,0.08); }
+      .contact-row.whatsapp-row { border-left-color: #C9A96E; background: rgba(201,169,110,0.05); box-shadow: 0 0 40px rgba(201,169,110,0.06); }
+      .contact-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(201,169,110,0.12); display: flex; align-items: center; justify-content: center; flex: none; color: #C9A96E; }
+      .contact-icon svg { width: 18px; height: 18px; }
+      .contact-label { font-size: 0.75rem; font-weight: 500; color: #F5F0E8; }
+      .contact-value { font-size: 0.7rem; font-weight: 300; color: #8A8A8A; margin-top: 1px; }
+
+      /* Booking form */
+      #booking { padding: 80px 20px; background: rgba(26,26,28,0.4); }
+      .form-row { margin-bottom: 18px; }
+      .form-row label { display: block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,232,0.5); margin-bottom: 6px; }
+      .form-row input, .form-row select, .form-row textarea {
+        width: 100%; padding: 13px 16px; background: rgba(26,26,28,0.9); border: 1px solid rgba(245,240,232,0.08);
+        border-radius: 2px; color: #F5F0E8; font-size: 0.85rem; font-weight: 300; outline: none; transition: all 0.3s;
+      }
+      .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: #C9A96E; box-shadow: 0 0 0 2px rgba(201,169,110,0.2); }
+      .form-row input::placeholder, .form-row textarea::placeholder { color: rgba(138,138,138,0.6); }
+      .form-row textarea { resize: vertical; min-height: 100px; }
+      .form-row select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; color: #F5F0E8; }
+      .form-row select option { background: #1A1A1C; color: #F5F0E8; }
+
+      /* WhatsApp FAB */
+      #wa-fab {
+        position: fixed; bottom: 20px; right: 20px; z-index: 90; width: 56px; height: 56px;
+        background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 20px rgba(37,211,102,0.4); transition: all 0.3s;
+      }
+      #wa-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+      #wa-fab svg { width: 28px; height: 28px; fill: white; }
+
+      /* Footer */
+      footer { padding: 48px 20px; text-align: center; border-top: 1px solid rgba(201,169,110,0.15); }
+      footer p { font-size: 0.65rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; }
+      footer .copy { margin-top: 4px; color: rgba(138,138,138,0.5); }
+
+      /* Reveal animation */
+      .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+      .reveal.visible { opacity: 1; transform: translateY(0); }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        html { scroll-behavior: auto; }
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
+      /* Empty state */
+      .empty-state { text-align: center; padding: 40px 20px; color: #8A8A8A; font-size: 0.85rem; font-weight: 300; border: 1px dashed rgba(245,240,232,0.08); border-radius: 2px; }
+    </style>
+  </head>
+  <body class="bg-[#0C0C0D] text-[#F5F0E8] min-h-dvh overflow-x-hidden grain-overlay">
+
+    <!-- ====== HEADER ====== -->
+    <header id="header">
+      <div class="inner">
+        <span class="logo"><%= user.name %> ✦</span>
+        <nav aria-label="Quick navigation">
+          <a href="#gallery">Portfolio</a>
+          <a href="#services">Services</a>
+          <a href="#testimonials">Reviews</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ====== HERO ====== -->
+    <section id="hero">
+      <div id="hero-bg" aria-hidden="true"></div>
+      <div id="hero-overlay" aria-hidden="true"></div>
+      <div id="hero-content" class="max-w-content">
+        <div class="reveal">
+          <p style="font-size:0.7rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:#C9A96E;">Editorial Bridal Makeup</p>
+          <h1 style="margin-top:10px;"><%= user.name %></h1>
+          <p class="subtitle"><%= user.title || 'Build. Shape. Disrupt.' %></p>
+          <p class="location"><%= user.location || 'Available Worldwide' %></p>
+          <div id="hero-cta">
+            <a href="#gallery" class="btn-gold">View Portfolio</a>
+            <a href="#booking" class="btn-outline">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <div id="scroll-indicator" aria-hidden="true"></div>
+    </section>
+
+    <!-- ====== ABOUT ====== -->
+    <section id="about">
+      <div id="about-bg" aria-hidden="true"></div>
+      <div id="about-inner" class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:12px;">
+          <span class="section-label">About</span>
+          <h2 class="section-title" style="margin-top:8px;"><%= user.name %></h2>
+        </div>
+        <div class="reveal" style="margin-top:28px;">
+          <blockquote class="pull-quote"><%= user.bio || 'Redefining bridal beauty through the lens of high-fashion editorial. Every face is a canvas; every look, a statement.' %></blockquote>
+        </div>
+        <div class="stats-row reveal">
+          <div class="stat-card"><p class="num">8+</p><p class="lbl">Years Experience</p></div>
+          <div class="stat-card"><p class="num">350+</p><p class="lbl">Brides</p></div>
+          <div class="stat-card"><p class="num">15+</p><p class="lbl">Awards</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SERVICES ====== -->
+    <section id="services">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Services & Investment</span>
+          <h2 class="section-title" style="margin-top:8px;">Curated Services</h2>
+        </div>
+        <div style="margin-top:28px;" class="reveal">
+          <% if (user.services && user.services.length) { %>
+            <% user.services.forEach(function(s) { %>
+          <div class="service-card">
+            <div><h3><%= s.name %></h3><% if (s.desc) { %><p><%= s.desc %></p><% } %></div>
+            <span class="price"><%= s.price %></span>
+          </div>
+            <% }) %>
+          <% } else { %>
+          <div class="service-card"><div><h3>Bridal Editorial</h3><p>Full bridal look with pre-wedding trial session</p></div><span class="price">₹28K+</span></div>
+          <div class="service-card"><div><h3>Engagement</h3><p>Roka, sangeet & pre-wedding functions</p></div><span class="price">₹18K+</span></div>
+          <div class="service-card"><div><h3>Editorial & Fashion</h3><p>Magazine, lookbook & campaign shoots</p></div><span class="price">₹35K+</span></div>
+          <div class="service-card"><div><h3>Airbrush</h3><p>HD airbrush finish for camera-ready perfection</p></div><span class="price">₹22K+</span></div>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== GALLERY ====== -->
+    <section id="gallery">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Selected Work</span>
+          <h2 class="section-title" style="margin-top:8px;">Portfolio</h2>
+        </div>
+        <% if (user.gallery && user.gallery.length) { %>
+        <div class="gallery-masonry reveal">
+          <% user.gallery.forEach(function(img, i) { %>
+          <div class="gallery-item <%= i === 0 ? 'full' : '' %>" tabindex="0" role="button" aria-label="View <%= img.alt || 'gallery image' %>" data-full="<%= img.url %>">
+            <img src="<%= img.url %>" alt="<%= img.alt || 'Bridal makeup portfolio' %>" loading="lazy" />
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="gallery-masonry reveal">
+          <div class="gallery-item full" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=1200&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80&fit=crop" alt="Bridal editorial" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80&fit=crop" alt="Soft glam" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=80&fit=crop" alt="Makeup detail" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&fit=crop" alt="Traditional elegance" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80&fit=crop" alt="Full transformation" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1597225244660-1cd128c6888a?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1597225244660-1cd128c6888a?w=800&q=80&fit=crop" alt="Bridal portrait" loading="lazy" />
+          </div>
+          <div class="gallery-item" tabindex="0" role="button" aria-label="View gallery image" data-full="https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=800&q=85&fit=crop">
+            <img src="https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=800&q=80&fit=crop" alt="Behind the scenes" loading="lazy" />
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+      <button id="lightbox-close" aria-label="Close viewer">&times;</button>
+      <img id="lightbox-img" src="" alt="" />
+    </div>
+
+    <!-- ====== TESTIMONIALS ====== -->
+    <section id="testimonials">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Kind Words</span>
+          <h2 class="section-title" style="margin-top:8px;">Press &amp; Brides</h2>
+        </div>
+        <div style="margin-top:32px;">
+          <% if (user.testimonials && user.testimonials.length) { %>
+            <% user.testimonials.forEach(function(t) { %>
+          <div class="testimonial reveal">
+            <blockquote>"<%= t.text %>"</blockquote>
+            <p class="client"><%= t.name %></p>
+            <p class="event"><%= t.event || 'Bride' %></p>
+          </div>
+            <% }) %>
+          <% } else { %>
+          <div class="empty-state reveal">No testimonials yet</div>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== AVAILABILITY ====== -->
+    <section id="availability">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Booking Availability</span>
+          <h2 class="section-title" style="margin-top:8px;">Open Dates</h2>
+          <p style="font-size:0.8rem;font-weight:300;color:#8A8A8A;margin-top:8px;">Claim your date before it's taken</p>
+        </div>
+        <div class="date-pills reveal">
+          <span class="date-pill">July 22 — Available</span>
+          <span class="date-pill">August 05 — Available</span>
+          <span class="date-pill">August 18 — Booked</span>
+          <span class="date-pill">September 02 — Available</span>
+          <span class="date-pill">September 14 — Available</span>
+        </div>
+        <div class="mini-calendar reveal">
+          <div class="cal-header" id="cal-month-label"></div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <p style="text-align:center;margin-top:14px;font-size:0.7rem;color:rgba(138,138,138,0.6);">🟢 Available &nbsp;·&nbsp; 🔴 Booked &nbsp;·&nbsp; ⚪ Past</p>
+      </div>
+    </section>
+
+    <!-- ====== CONTACT ====== -->
+    <section id="contact">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Connect</span>
+          <h2 class="section-title" style="margin-top:8px;">Get In Touch</h2>
+        </div>
+        <div style="margin-top:28px;">
+          <% if (user.social && user.social.phone) { %>
+          <a href="tel:<%= user.social.phone %>" class="contact-row reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg></div>
+            <div><p class="contact-label">Phone</p><p class="contact-value"><%= user.social.phone %></p></div>
+          </a>
+          <% } %>
+          <% if (user.social && user.social.whatsapp) { %>
+          <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%20I'd%20love%20to%20inquire%20about%20editorial%20bridal%20makeup%20services." target="_blank" rel="noopener noreferrer" class="contact-row whatsapp-row reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg></div>
+            <div><p class="contact-label">WhatsApp</p><p class="contact-value">Quick inquiry</p></div>
+          </a>
+          <% } %>
+          <% if (user.social && user.social.instagram) { %>
+          <a href="https://instagram.com/<%= user.social.instagram %>" target="_blank" rel="noopener noreferrer" class="contact-row reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.11 2.525c.636-.247 1.363-.416 2.427-.465C8.83 2.013 9.075 2 12.315 2z"/></svg></div>
+            <div><p class="contact-label">Instagram</p><p class="contact-value">@<%= user.social.instagram %></p></div>
+          </a>
+          <% } %>
+          <% if (user.social && user.social.email) { %>
+          <a href="mailto:<%= user.social.email %>" class="contact-row reveal">
+            <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+            <div><p class="contact-label">Email</p><p class="contact-value"><%= user.social.email %></p></div>
+          </a>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== BOOKING FORM ====== -->
+    <section id="booking">
+      <div class="max-w-content">
+        <div class="gold-divider reveal" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <div class="reveal" style="text-align:center;margin-top:8px;">
+          <span class="section-label">Inquiry</span>
+          <h2 class="section-title" style="margin-top:8px;">Make Your Inquiry</h2>
+          <p style="font-size:0.8rem;font-weight:300;color:#8A8A8A;margin-top:10px;">Tell me about your event and I'll get back within 24 hours</p>
+        </div>
+        <% if (bookingStatus === 'success') { %>
+        <div class="reveal" style="margin-top:28px;padding:16px 20px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:2px;text-align:center;">
+          <p style="color:#4ade80;font-weight:500;font-size:0.9rem;">✓ Inquiry sent successfully!</p>
+          <p style="font-size:0.75rem;color:#8A8A8A;margin-top:4px;">I'll be in touch within 24 hours.</p>
+        </div>
+        <% } else if (bookingStatus && bookingStatus.startsWith('error')) { %>
+        <div class="reveal" style="margin-top:28px;padding:16px 20px;background:rgba(220,80,80,0.08);border:1px solid rgba(220,80,80,0.25);border-radius:2px;text-align:center;">
+          <p style="color:#dc5050;font-weight:500;font-size:0.9rem;">✗ <%= bookingStatus.replace('error=', '') %></p>
+        </div>
+        <% } %>
+        <form action="/booking/<%= user.username %>" method="POST" class="reveal" style="margin-top:28px;" autocomplete="on">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" name="username" value="<%= user.username %>" />
+          <div class="form-row">
+            <label for="full_name">Full Name <span style="color:#C9A96E;">*</span></label>
+            <input type="text" id="full_name" name="full_name" required placeholder="e.g. Ananya Sharma" autocomplete="name" />
+          </div>
+          <div class="form-row">
+            <label for="email">Email <span style="color:#C9A96E;">*</span></label>
+            <input type="email" id="email" name="email" required placeholder="e.g. ananya@email.com" autocomplete="email" />
+          </div>
+          <div class="form-row">
+            <label for="phone">Phone <span style="color:#C9A96E;">*</span></label>
+            <input type="tel" id="phone" name="phone" required placeholder="+91 98765 43210" autocomplete="tel" />
+          </div>
+          <div class="form-row">
+            <label for="event_date">Event Date <span style="color:#C9A96E;">*</span></label>
+            <input type="date" id="event_date" name="event_date" required min="<%= new Date().toISOString().split('T')[0] %>" />
+          </div>
+          <div class="form-row">
+            <label for="event_type">Event Type <span style="color:#C9A96E;">*</span></label>
+            <select id="event_type" name="event_type" required>
+              <option value="">Select event type...</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Engagement">Engagement</option>
+              <option value="Reception">Reception</option>
+              <option value="Editorial">Editorial</option>
+              <option value="Fashion Show">Fashion Show</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="message">Message <span style="color:#C9A96E;">*</span></label>
+            <textarea id="message" name="message" rows="4" required placeholder="Tell me about your event..."></textarea>
+          </div>
+          <button type="submit" class="btn-gold" style="width:100%;">Send Inquiry</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ====== FOOTER ====== -->
+    <footer>
+      <div class="max-w-content">
+        <div class="gold-divider" style="padding:16px 0;" aria-hidden="true"><span class="gold-divider-diamond"></span></div>
+        <p style="font-family:'Playfair Display',serif;font-weight:600;font-style:italic;font-size:0.85rem;color:rgba(245,240,232,0.6);letter-spacing:0.04em;"><%= user.name %></p>
+        <p style="margin-top:4px;font-size:0.65rem;letter-spacing:0.12em;">Editorial Bridal Makeup</p>
+        <p class="copy">© 2026 <%= user.name %>. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- WhatsApp FAB -->
+    <% if (user.social && user.social.whatsapp) { %>
+    <a href="https://wa.me/<%= user.social.whatsapp %>?text=Hi%20<%= encodeURIComponent(user.name) %>%20I'd%20love%20to%20inquire%20about%20editorial%20bridal%20makeup%20services." target="_blank" rel="noopener noreferrer" id="wa-fab" aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+    </a>
+    <% } %>
+
+    <script>
+      (function() {
+        'use strict';
+
+        // Intersection Observer for reveal animations
+        var reveals = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+          reveals.forEach(function(el) { observer.observe(el); });
+        } else {
+          reveals.forEach(function(el) { el.classList.add('visible'); });
+        }
+
+        // Gallery lightbox
+        var lightbox = document.getElementById('lightbox');
+        var lightboxImg = document.getElementById('lightbox-img');
+        var lightboxClose = document.getElementById('lightbox-close');
+        var galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(function(item) {
+          item.addEventListener('click', function() { openLightbox(item.getAttribute('data-full')); });
+          item.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(item.getAttribute('data-full')); } });
+        });
+        function openLightbox(src) { lightboxImg.src = src; lightbox.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { lightbox.classList.remove('active'); document.body.style.overflow = ''; lightboxImg.src = ''; }
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox(); });
+
+        // Mini calendar
+        var calGrid = document.getElementById('cal-grid');
+        var calLabel = document.getElementById('cal-month-label');
+        if (calGrid && calLabel) {
+          var now = new Date();
+          var year = now.getFullYear();
+          var month = now.getMonth();
+          var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+          calLabel.textContent = monthNames[month] + ' ' + year;
+          var dowNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+          var firstDay = new Date(year, month, 1).getDay();
+          var daysInMonth = new Date(year, month + 1, 0).getDate();
+          var today = now.getDate();
+          var headerRow = document.createElement('div');
+          dowNames.forEach(function(d) { var c = document.createElement('div'); c.className = 'dow'; c.textContent = d; headerRow.appendChild(c); });
+          calGrid.appendChild(headerRow);
+          for (var i = 0; i < firstDay; i++) { var empty = document.createElement('div'); empty.className = 'day-cell empty'; calGrid.appendChild(empty); }
+          var availDates = [22, 5, 18, 2, 14, 26];
+          var bookedDates = [18];
+          for (var d = 1; d <= daysInMonth; d++) {
+            var cell = document.createElement('div'); cell.className = 'day-cell'; cell.textContent = d;
+            if (d === today) { cell.style.color = '#C9A96E'; cell.style.fontWeight = '600'; }
+            if (d < today) { cell.classList.add('past'); }
+            else if (bookedDates.indexOf(d) !== -1) { cell.classList.add('booked'); }
+            else if (availDates.indexOf(d) !== -1 || bookedDates.indexOf(d) === -1 && d > today) {
+              if (d % 3 === 0 && d !== today) { cell.classList.add('booked'); }
+              else { cell.classList.add('avail'); }
+            }
+            calGrid.appendChild(cell);
+          }
+        }
+
+        // Header scroll effect
+        var header = document.getElementById('header');
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 40) { header.style.borderBottomColor = 'rgba(245,240,232,0.1)'; }
+          else { header.style.borderBottomColor = 'rgba(245,240,232,0.04)'; }
+        }, { passive: true });
+      })();
+    </script>
+  </body>
+</html>
