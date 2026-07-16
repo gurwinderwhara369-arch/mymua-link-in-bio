@@ -581,6 +581,133 @@ Both templates receive the SAME variables. They just display them differently:
 </div>
 ```
 
+### How ONE routing function dynamically serves ALL 9 templates
+
+The key architectural insight: **subdomain routing code is written ONCE in one file** (`routes/brochure.js`). It does NOT know or care which template is being rendered. The same `renderBrochure()` function serves ALL templates dynamically.
+
+```
+                    ┌────────────────────────────────────┐
+                    │       renderBrochure()             │
+                    │  (routes/brochure.js:320-371)      │
+                    │                                    │
+                    │  1. Extract username (subdomain)   │
+                    │  2. Look up user in DB             │
+                    │  3. Look up user_content in DB     │
+                    │  4. Apply content defaults         │
+                    │  5. templateMap[user.template_id]  │ ← dynamic!
+                    │  6. res.render(`templates/${template}`, { user, username })
+                    └──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+                       │  │  │  │  │  │  │  │  │  │  │
+                       ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼
+                    T1  T2  T3  T4  T5  T6  T7  T8  T9
+```
+
+**The critical line that makes it dynamic:**
+
+```js
+// This ONE line decides which template file to render
+// It looks up the template_id from the user's database record
+// and maps it to a filename like "template-4.ejs"
+const template = templateMap[user.template_id] || 'template-1';
+
+// Then renders that specific template file
+// The SAME user object is passed to EVERY template
+res.render(`templates/${template}`, { user: content, username, bookingStatus });
+```
+
+**Real example — same function, different results:**
+
+| Request | DB lookup | template_id | Rendered file | 
+|---------|-----------|-------------|---------------|
+| `https://zara.mymua.in` | zara → template_id=3 | `templateMap[3]` | `template-3.ejs` |
+| `https://naina.mymua.in` | naina → template_id=4 | `templateMap[4]` | `template-4.ejs` |
+| `https://diya.mymua.in` | diya → template_id=9 | `templateMap[9]` | `template-9.ejs` |
+| New user with template_id=7 | newuser → template_id=7 | `templateMap[7]` | `template-7.ejs` |
+| Unknown template_id=99 | anything → template_id=99 | `templateMap[99]` → undefined | `template-1.ejs` (fallback) |
+
+**What happens in `renderBrochure` step by step:**
+
+```js
+// User visits https://naina.mymua.in
+// Step 1: Subdomain middleware extracts "naina"
+// Step 2: renderBrochure runs
+
+function renderBrochure(req, res, next) {
+  const username = req.params.username;  // "naina"
+  const db = getDb();
+
+  // Step 3: Get user from DB
+  const user = db.prepare(
+    'SELECT id, username, template_id FROM users WHERE username = ?'
+  ).get(username);
+  // → { id: 10, username: 'naina', template_id: 4 }
+
+  // Step 4: Get content from DB
+  const row = db.prepare(
+    'SELECT data FROM user_content WHERE user_id = ?'
+  ).get(user.id);
+  const content = row ? JSON.parse(row.data) : {};
+  content.social = content.social || {};
+  content.services = content.services || [];
+  content.gallery = content.gallery || [];
+  content.testimonials = content.testimonials || [];
+  content.basic = content.basic || {};
+
+  // Step 5: Dynamic template selection
+  const templateMap = {
+    1: 'template-1', 2: 'template-2', 3: 'template-3',
+    4: 'template-4', 5: 'template-5', 6: 'template-6',
+    7: 'template-7', 8: 'template-8', 9: 'template-9'
+  };
+  const template = templateMap[user.template_id];
+  // → templateMap[4] → "template-4"
+
+  // Step 6: Render
+  res.render(`templates/template-4`, { user: content, username: 'naina' });
+  // The .ejs extension is automatic (EJS view engine adds it)
+}
+```
+
+**Proof that templates don't know about subdomains — search the template files:**
+
+```bash
+# Check if ANY template file contains subdomain-related code
+grep -rn "subdomain\|host\|split\|parts\[0\]" mymua-link-in-bio-saas/views/templates/
+# Result: (no output)
+# → ZERO template files know about subdomains!
+```
+
+**All 9 templates are PURE presentation.** They only use the variables passed to them:
+
+```ejs
+<!-- Every template uses these exact same variables -->
+<%= user.basic.name %>              <!-- "Naina Kaur" -->
+<%= user.social.instagram %>        <!-- "naina_mua" -->
+<%= user.services[0].name %>        <!-- "Bridal Makeup" -->
+<%= username %>                     <!-- "naina" -->
+<%= bookingStatus %>                <!-- "success" -->
+```
+
+**How to add a 10th template — routing code needs ONE line change:**
+
+```js
+// Only change needed in routes/brochure.js:
+const templateMap = {
+  1: 'template-1', 2: 'template-2', 3: 'template-3',
+  4: 'template-4', 5: 'template-5', 6: 'template-6',
+  7: 'template-7', 8: 'template-8', 9: 'template-9',
+  10: 'template-10'    // ← ADD THIS ONE LINE
+};
+
+// That's it. The rest of the routing code stays IDENTICAL.
+// Subdomain extraction → same code
+// User lookup → same query
+// Content fetch → same query
+// Content defaults → same code
+// res.render → automatically picks template-10.ejs
+//                        when user has template_id = 10
+```
+
 ### How to add a NEW template (step by step)
 
 ```js
