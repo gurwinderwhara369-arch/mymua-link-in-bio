@@ -417,6 +417,16 @@
         <h2 class="font-yatra text-[clamp(1.8rem,6vw,2.4rem)] text-[#C8993A] mt-2 leading-tight">Book Your<br/>Bridal Makeup</h2>
         <div class="shimmer mt-4 mb-6 opacity-40"></div>
       </div>
+      <% if (bookingStatus === 'success') { %>
+      <div class="reveal mb-4 text-center" style="padding:16px 20px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:2px;">
+        <p style="color:#4ade80;font-weight:500;font-size:0.9rem;font-family:'Poppins',sans-serif;">✓ Booking sent successfully!</p>
+        <p style="font-size:0.75rem;color:#C8993A/70;margin-top:4px;font-family:'Poppins',sans-serif;">I'll be in touch within 24 hours.</p>
+      </div>
+      <% } else if (bookingStatus && bookingStatus.startsWith('error')) { %>
+      <div class="reveal mb-4 text-center" style="padding:16px 20px;background:rgba(220,80,80,0.08);border:1px solid rgba(220,80,80,0.25);border-radius:2px;">
+        <p style="color:#dc5050;font-weight:500;font-size:0.9rem;font-family:'Poppins',sans-serif;">✗ <%= bookingStatus.replace('error=', '') %></p>
+      </div>
+      <% } %>
       <form action="/booking/<%= user.username %>" method="POST" class="reveal flex flex-col gap-4" data-delay="100" novalidate>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Bride's Full Name <span class="text-[#C8993A]">*</span></label><input type="text" name="name" required class="b-input" placeholder="Enter bride's full name" autocomplete="name" /></div>
