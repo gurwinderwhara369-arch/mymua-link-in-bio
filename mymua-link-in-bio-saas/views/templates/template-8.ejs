@@ -449,8 +449,8 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="grid gap-4">
           <div>
-            <label class="f-label" for="full_name">Full Name <span>*</span></label>
-            <input class="f-input" type="text" id="full_name" name="full_name" placeholder="Your full name" required autocomplete="name" />
+            <label class="f-label" for="name">Full Name <span>*</span></label>
+            <input class="f-input" type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name" />
           </div>
           <div>
             <label class="f-label" for="email">Email <span>*</span></label>
@@ -465,8 +465,8 @@
             <input class="f-input" type="date" id="event_date" name="event_date" min="<%= new Date().toISOString().split('T')[0] %>" />
           </div>
           <div>
-            <label class="f-label" for="event_category">Event Category</label>
-            <select class="f-select" id="event_category" name="event_category">
+            <label class="f-label" for="service">Event Category</label>
+            <select class="f-select" id="service" name="service">
               <option value="" disabled selected>Select category</option>
               <option value="Bridal">Bridal</option>
               <option value="Party">Party</option>
@@ -477,8 +477,8 @@
             </select>
           </div>
           <div>
-            <label class="f-label" for="message">Message</label>
-            <textarea class="f-textarea" id="message" name="message" placeholder="Tell me about your event, preferred look, and any specific requests..." rows="3"></textarea>
+            <label class="f-label" for="notes">Message</label>
+            <textarea class="f-textarea" id="notes" name="notes" placeholder="Tell me about your event, preferred look, and any specific requests..." rows="3"></textarea>
           </div>
         </div>
         <button type="submit" class="btn btn-rose mt-5 w-full justify-center" style="padding:15px 28px;">Send Message</button>

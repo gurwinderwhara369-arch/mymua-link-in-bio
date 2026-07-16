@@ -419,25 +419,25 @@
       </div>
       <form action="/booking/<%= user.username %>" method="POST" class="reveal flex flex-col gap-4" data-delay="100" novalidate>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Bride's Full Name <span class="text-[#C8993A]">*</span></label><input type="text" name="bride_name" required class="b-input" placeholder="Enter bride's full name" autocomplete="name" /></div>
+        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Bride's Full Name <span class="text-[#C8993A]">*</span></label><input type="text" name="name" required class="b-input" placeholder="Enter bride's full name" autocomplete="name" /></div>
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Groom's Full Name</label><input type="text" name="groom_name" class="b-input" placeholder="Groom's full name (optional)" /></div>
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Email <span class="text-[#C8993A]">*</span></label><input type="email" name="email" required class="b-input" placeholder="your@email.com" autocomplete="email" /></div>
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Phone <span class="text-[#C8993A]">*</span></label><input type="tel" name="phone" required class="b-input" placeholder="+91 98765 43210" autocomplete="tel" /></div>
-        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Wedding Date <span class="text-[#C8993A]">*</span></label><input type="date" name="wedding_date" required class="b-input" min="<%= new Date().toISOString().split('T')[0] %>" /></div>
+        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Wedding Date <span class="text-[#C8993A]">*</span></label><input type="date" name="event_date" required class="b-input" min="<%= new Date().toISOString().split('T')[0] %>" /></div>
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Ceremony Type <span class="text-[#C8993A]">*</span></label>
-          <select name="ceremony_type" required class="b-input">
+          <select name="service" required class="b-input">
             <option value="">Select ceremony type...</option>
             <option value="Haldi">Haldi</option><option value="Mehendi">Mehendi</option>
             <option value="Sangeet">Sangeet</option><option value="Wedding">Wedding</option>
             <option value="Reception">Reception</option><option value="Engagement">Engagement</option>
           </select></div>
-        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Venue / City</label><input type="text" name="venue" class="b-input" placeholder="e.g. Mumbai, Maharashtra" /></div>
+        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Venue / City</label><input type="text" name="location" class="b-input" placeholder="e.g. Mumbai, Maharashtra" /></div>
         <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Guest Count</label>
           <select name="guests" class="b-input">
             <option value="">Select...</option><option value="intimate">Intimate (&lt;50)</option>
             <option value="mid">Mid-size (50–200)</option><option value="grand">Grand (200+)</option>
           </select></div>
-        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Message</label><textarea name="message" rows="3" class="b-input" placeholder="Tell me about your wedding vision..."></textarea></div>
+        <div><label class="block text-[10px] tracking-[0.15em] uppercase text-[#C8993A]/70 mb-1.5 font-medium font-poppins">Message</label><textarea name="notes" rows="3" class="b-input" placeholder="Tell me about your wedding vision..."></textarea></div>
         <button type="submit" class="w-full py-4 bg-[#C8993A] text-[#1A0011] font-poppins font-medium text-sm tracking-[0.15em] uppercase rounded-full hover:bg-[#E8C547] transition-all active:scale-[0.97] mt-2">Book Now</button>
       </form>
     </div>

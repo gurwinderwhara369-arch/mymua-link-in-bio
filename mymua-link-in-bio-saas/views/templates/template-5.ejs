@@ -525,8 +525,8 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="grid gap-4">
           <div>
-            <label class="f-label" for="full_name">Full Name <span>*</span></label>
-            <input class="f-input" type="text" id="full_name" name="full_name" placeholder="Your full name" required autocomplete="name" />
+            <label class="f-label" for="name">Full Name <span>*</span></label>
+            <input class="f-input" type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name" />
           </div>
           <div>
             <label class="f-label" for="email">Email <span>*</span></label>
@@ -545,8 +545,8 @@
             <input class="f-input" type="text" id="destination" name="destination" placeholder="e.g. Santorini, Greece" />
           </div>
           <div>
-            <label class="f-label" for="event_type">Event Type</label>
-            <select class="f-select" id="event_type" name="event_type">
+            <label class="f-label" for="service">Event Type</label>
+            <select class="f-select" id="service" name="service">
               <option value="" disabled selected>Select type</option>
               <option value="Wedding">Wedding</option>
               <option value="Engagement">Engagement</option>
@@ -565,8 +565,8 @@
             </select>
           </div>
           <div>
-            <label class="f-label" for="message">Message</label>
-            <textarea class="f-textarea" id="message" name="message" placeholder="Tell me about your dream wedding day, chosen location, and the look you imagine..."></textarea>
+            <label class="f-label" for="notes">Message</label>
+            <textarea class="f-textarea" id="notes" name="notes" placeholder="Tell me about your dream wedding day, chosen location, and the look you imagine..."></textarea>
           </div>
         </div>
         <button type="submit" class="btn btn-fill mt-5 w-full justify-center" style="padding: 15px 28px; font-size: 0.85rem;">Inquire Now</button>
