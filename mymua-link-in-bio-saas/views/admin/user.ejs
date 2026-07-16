@@ -3,61 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User <%= user.username %> — Admin — Mymua</title>
+  <title><%= user.username %> — Admin — Mymua</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>input,select,textarea{font-size:16px!important}</style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .msg-in { animation: slideDown 0.25s ease-out; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    input, select { font-size: 16px !important; }
+    dialog::backdrop { background: rgba(0,0,0,0.6); }
+  </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-dvh p-6">
-  <div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <a href="/admin" class="text-xs text-zinc-500 hover:text-zinc-400 underline">&larr; Back to all users</a>
-        <h1 class="text-2xl font-bold mt-1"><%= user.username %></h1>
-        <p class="text-zinc-500 text-sm"><%= user.email %> · Template <%= user.template_id %> · <%= user.is_admin ? 'Admin' : 'MUA' %></p>
+<body class="bg-zinc-950 text-zinc-100 min-h-dvh">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+    <a href="/admin" class="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors mb-6">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to all users
+    </a>
+
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-lg font-bold text-zinc-400"><%= user.username[0].toUpperCase() %></div>
+        <div>
+          <h1 class="text-2xl font-bold"><%= user.username %></h1>
+          <p class="text-zinc-500 text-sm mt-0.5">
+            <%= user.email %> ·
+            <span class="text-violet-400">T<%= user.template_id %> <%= templateNames[user.template_id] %></span> ·
+            <%= user.is_admin ? 'Admin' : 'MUA' %>
+          </p>
+        </div>
       </div>
       <form method="POST" action="/admin/user/<%= user.id %>/toggle-admin">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button class="text-xs px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300"><%= user.is_admin ? 'Remove Admin' : 'Make Admin' %></button>
+        <button class="px-4 py-2 rounded-xl text-sm font-medium transition-colors <%= user.is_admin ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700' %>"><%= user.is_admin ? 'Remove Admin' : 'Make Admin' %></button>
       </form>
     </div>
 
-    <div class="grid grid-cols-2 gap-6">
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h2 class="font-semibold mb-3">Profile</h2>
-        <div class="space-y-2 text-sm">
-          <p><span class="text-zinc-500">Name:</span> <%= content.name || '—' %></p>
-          <p><span class="text-zinc-500">Title:</span> <%= content.title || '—' %></p>
-          <p><span class="text-zinc-500">Location:</span> <%= content.location || '—' %></p>
-          <p><span class="text-zinc-500">Phone:</span> <%= content.social?.phone || '—' %></p>
-          <p><span class="text-zinc-500">WhatsApp:</span> <%= content.social?.whatsapp || '—' %></p>
-          <p><span class="text-zinc-500">Instagram:</span> <%= content.social?.instagram || '—' %></p>
-          <p><span class="text-zinc-500">Email:</span> <%= content.social?.email || '—' %></p>
-          <p><span class="text-zinc-500">Services:</span> <%= (content.services || []).length %></p>
-          <p><span class="text-zinc-500">Gallery:</span> <%= (content.gallery || []).length %> images</p>
-          <p><span class="text-zinc-500">Testimonials:</span> <%= (content.testimonials || []).length %></p>
-        </div>
+    <% if (msg) { %>
+    <div class="msg-in mb-6 p-4 rounded-xl border text-sm flex items-center gap-3 <%= msgType === 'error' ? 'bg-red-900/20 border-red-800/40 text-red-400' : 'bg-emerald-900/20 border-emerald-800/40 text-emerald-400' %>">
+      <span><%= msg %></span>
+    </div>
+    <% } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-5 sm:p-6 fade-in" style="animation-delay:0s">
+        <h2 class="font-semibold mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Profile
+        </h2>
+        <form method="POST" action="/admin/user/<%= user.id %>/content" class="space-y-4">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">Name</label>
+              <input type="text" name="name" value="<%= content.basic?.name || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">Title</label>
+              <input type="text" name="title" value="<%= content.basic?.title || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">Location</label>
+            <input type="text" name="location" value="<%= content.basic?.location || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">Phone</label>
+            <input type="text" name="phone" value="<%= content.basic?.phone || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+          </div>
+          <div class="border-t border-zinc-800/60 pt-4">
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Social Links</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-zinc-500 mb-1">Instagram</label>
+                <input type="text" name="instagram" value="<%= content.social?.instagram || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+              </div>
+              <div>
+                <label class="block text-xs text-zinc-500 mb-1">WhatsApp</label>
+                <input type="text" name="whatsapp" value="<%= content.social?.whatsapp || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+              </div>
+              <div>
+                <label class="block text-xs text-zinc-500 mb-1">Social Phone</label>
+                <input type="text" name="social_phone" value="<%= content.social?.phone || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+              </div>
+              <div>
+                <label class="block text-xs text-zinc-500 mb-1">Social Email</label>
+                <input type="text" name="social_email" value="<%= content.social?.email || '' %>" class="w-full px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <button type="submit" class="px-5 py-2.5 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-sm font-medium text-zinc-200 transition-colors">Save Profile</button>
+          </div>
+        </form>
       </div>
 
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h2 class="font-semibold mb-3">Bookings (<%= bookings.length %>)</h2>
-        <% if (!bookings.length) { %>
-        <p class="text-zinc-500 text-sm">No bookings yet.</p>
-        <% } else { %>
-        <div class="space-y-3 max-h-96 overflow-y-auto">
-          <% bookings.forEach(function(b) { %>
-          <div class="bg-zinc-800/50 rounded-lg p-3 text-sm">
-            <div class="flex items-center justify-between">
-              <span class="font-medium"><%= b.data.name %></span>
-              <span class="text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-400"><%= b.status %></span>
+      <div class="space-y-6">
+        <div class="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-5 sm:p-6 fade-in" style="animation-delay:0.05s">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Settings
+          </h2>
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Template</label>
+              <form method="POST" action="/admin/user/<%= user.id %>/template" class="flex items-center gap-2">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <select name="template_id" class="flex-1 px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 focus:outline-none focus:border-zinc-500 transition-colors">
+                  <% for (let i = 1; i <= 9; i++) { %>
+                  <option value="<%= i %>" <%= user.template_id === i ? 'selected' : '' %>><%= i %> — <%= templateNames[i] %></option>
+                  <% } %>
+                </select>
+                <button type="submit" class="px-4 py-2.5 bg-zinc-700 hover:bg-zinc-600 rounded-xl text-sm text-zinc-200 transition-colors">Apply</button>
+              </form>
             </div>
-            <p class="text-zinc-400 text-xs mt-1"><%= b.data.phone %><% if (b.data.email) { %> · <%= b.data.email %><% } %></p>
-            <% if (b.data.service) { %><p class="text-zinc-500 text-xs"><%= b.data.service %></p><% } %>
-            <p class="text-zinc-600 text-xs mt-1"><%= b.created_at %></p>
+            <div>
+              <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Reset Password</label>
+              <form method="POST" action="/admin/user/<%= user.id %>/password" class="flex items-center gap-2">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="text" name="password" placeholder="New password (min 6 chars)" class="flex-1 px-3.5 py-2.5 bg-zinc-800/60 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors">
+                <button type="submit" class="px-4 py-2.5 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 rounded-xl text-sm font-medium transition-colors">Reset</button>
+              </form>
+            </div>
+            <div class="pt-2 border-t border-zinc-800/60">
+              <form method="POST" action="/admin/user/<%= user.id %>/delete" onsubmit="return confirm('Delete <%= user.username %> permanently? This cannot be undone.')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="w-full px-4 py-2.5 bg-red-900/10 text-red-400 hover:bg-red-900/20 rounded-xl text-sm font-medium transition-colors">Delete User</button>
+              </form>
+            </div>
           </div>
-          <% }) %>
         </div>
-        <% } %>
+
+        <div class="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-5 sm:p-6 fade-in" style="animation-delay:0.1s">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Content Summary
+          </h2>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-center justify-between py-1.5 border-b border-zinc-800/30">
+              <span class="text-zinc-500">Services</span>
+              <span class="font-medium"><%= (content.services || []).length %></span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-zinc-800/30">
+              <span class="text-zinc-500">Gallery</span>
+              <span class="font-medium"><%= (content.gallery || []).length %> images</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-zinc-800/30">
+              <span class="text-zinc-500">Testimonials</span>
+              <span class="font-medium"><%= (content.testimonials || []).length %></span>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <span class="text-zinc-500">Subdomain URL</span>
+              <span class="font-mono text-xs text-zinc-400"><%= user.username %>.mymua.in</span>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+
+    <div class="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl overflow-hidden fade-in" style="animation-delay:0.15s">
+      <div class="p-5 sm:p-6 border-b border-zinc-800/60 flex items-center justify-between">
+        <h2 class="font-semibold flex items-center gap-2">
+          <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Bookings (<%= bookings.length %>)
+        </h2>
+      </div>
+      <% if (!bookings.length) { %>
+      <div class="p-8 text-center text-zinc-500 text-sm">No bookings yet.</div>
+      <% } else { %>
+      <div class="divide-y divide-zinc-800/30">
+        <% bookings.forEach(function(b) { %>
+        <div class="p-5 sm:p-6 hover:bg-zinc-800/10 transition-colors">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-medium"><%= b.data.name %></span>
+                <span class="px-2 py-0.5 rounded-md text-xs font-medium
+                  <%= b.status === 'confirmed' ? 'bg-emerald-500/10 text-emerald-400' :
+                     b.status === 'cancelled' ? 'bg-red-500/10 text-red-400' :
+                     'bg-zinc-700/60 text-zinc-400' %>"><%= b.status %></span>
+                <span class="text-xs text-zinc-600">#<%= b.id %></span>
+              </div>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-zinc-400">
+                <span><%= b.data.phone %></span>
+                <% if (b.data.email) { %><span><%= b.data.email %></span><% } %>
+                <% if (b.data.service) { %><span><%= b.data.service %></span><% } %>
+                <% if (b.data.event_date) { %><span><%= b.data.event_date %></span><% } %>
+              </div>
+              <% if (b.data.notes) { %><p class="text-xs text-zinc-500 mt-2 italic"><%= b.data.notes %></p><% } %>
+              <p class="text-xs text-zinc-600 mt-2"><%= b.created_at %></p>
+            </div>
+            <form method="POST" action="/admin/booking/<%= b.id %>/status" class="flex items-center gap-1.5 shrink-0">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <select name="status" class="px-2 py-1.5 rounded-lg text-xs bg-zinc-800/60 border border-zinc-700/60 text-zinc-300 focus:outline-none focus:border-zinc-500">
+                <option value="pending" <%= b.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="confirmed" <%= b.status === 'confirmed' ? 'selected' : '' %>>Confirm</option>
+                <option value="cancelled" <%= b.status === 'cancelled' ? 'selected' : '' %>>Cancel</option>
+              </select>
+              <button type="submit" class="px-2.5 py-1.5 rounded-lg text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 transition-colors">Update</button>
+            </form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
     </div>
   </div>
 </body>
