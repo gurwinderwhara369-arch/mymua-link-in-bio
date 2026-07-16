@@ -9,7 +9,6 @@ const { upload, sanitize } = require('../middleware/validate');
 const router = Router();
 router.use(authGuard);
 router.use(dashboardLimiter);
-router.use(csrfProtect);
 
 router.use((req, res, next) => {
   res.locals.error = req.session.error || null;
@@ -42,7 +41,7 @@ router.get('/profile', (req, res) => {
   res.render('dashboard/profile', { content: getContent(req.session.userId), user: res.locals.user, error: res.locals.error });
 });
 
-router.post('/profile', upload.single('photo'), [
+router.post('/profile', upload.single('photo'), csrfProtect, [
   body('name').notEmpty().withMessage('Name is required').isLength({ max: 100 }).withMessage('Name too long'),
   body('bio').optional().isLength({ max: 1000 }).withMessage('Bio too long'),
   body('location').optional().isLength({ max: 200 }).withMessage('Location too long'),
@@ -63,7 +62,7 @@ router.get('/services', (req, res) => {
   res.render('dashboard/services', { content: getContent(req.session.userId), user: res.locals.user, error: res.locals.error });
 });
 
-router.post('/services', [
+router.post('/services', csrfProtect, [
   body('action').isIn(['add', 'edit', 'delete']).withMessage('Invalid action'),
   body('name').if(body('action').equals('add')).notEmpty().withMessage('Service name required').isLength({ max: 100 }),
   body('index').if(body('action').equals('edit') || body('action').equals('delete')).isInt({ min: 0 }).withMessage('Invalid index'),
@@ -71,6 +70,7 @@ router.post('/services', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) return fail(req, res, errors.array().map(e => e.msg).join(', '));
   const content = getContent(req.session.userId);
+  if (!content.services) content.services = [];
   const action = req.body.action;
   if (action === 'add') {
     content.services.push({
@@ -99,8 +99,9 @@ router.get('/gallery', (req, res) => {
   res.render('dashboard/gallery', { content: getContent(req.session.userId), user: res.locals.user, error: res.locals.error });
 });
 
-router.post('/gallery/upload', upload.array('images', 20), (req, res) => {
+router.post('/gallery/upload', upload.array('images', 20), csrfProtect, (req, res) => {
   const content = getContent(req.session.userId);
+  if (!content.gallery) content.gallery = [];
   if (req.files) {
     req.files.forEach(f => {
       content.gallery.push({
@@ -113,8 +114,9 @@ router.post('/gallery/upload', upload.array('images', 20), (req, res) => {
   res.redirect('/dashboard/gallery');
 });
 
-router.post('/gallery/delete', (req, res) => {
+router.post('/gallery/delete', csrfProtect, (req, res) => {
   const content = getContent(req.session.userId);
+  if (!content.gallery) content.gallery = [];
   const idx = parseInt(req.body.index);
   if (idx >= 0 && idx < content.gallery.length) content.gallery.splice(idx, 1);
   saveContent(req.session.userId, content);
@@ -125,7 +127,7 @@ router.get('/testimonials', (req, res) => {
   res.render('dashboard/testimonials', { content: getContent(req.session.userId), user: res.locals.user, error: res.locals.error });
 });
 
-router.post('/testimonials', [
+router.post('/testimonials', csrfProtect, [
   body('action').isIn(['add', 'edit', 'delete']).withMessage('Invalid action'),
   body('name').if(body('action').equals('add')).notEmpty().withMessage('Name required').isLength({ max: 100 }),
   body('index').if(body('action').equals('edit') || body('action').equals('delete')).isInt({ min: 0 }).withMessage('Invalid index'),
@@ -133,6 +135,7 @@ router.post('/testimonials', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) return fail(req, res, errors.array().map(e => e.msg).join(', '));
   const content = getContent(req.session.userId);
+  if (!content.testimonials) content.testimonials = [];
   const action = req.body.action;
   if (action === 'add') {
     content.testimonials.push({
@@ -161,7 +164,7 @@ router.get('/social', (req, res) => {
   res.render('dashboard/social', { content: getContent(req.session.userId), user: res.locals.user, error: res.locals.error });
 });
 
-router.post('/social', [
+router.post('/social', csrfProtect, [
   body('email').optional().isEmail().withMessage('Invalid email').normalizeEmail(),
   body('phone').optional().isMobilePhone().withMessage('Invalid phone number'),
   body('whatsapp').optional().isMobilePhone().withMessage('Invalid WhatsApp number'),
@@ -182,7 +185,7 @@ router.get('/templates', (req, res) => {
   res.render('dashboard/templates', { content: getContent(req.session.userId), user: res.locals.user, currentTemplate: res.locals.user.template_id });
 });
 
-router.post('/templates', (req, res) => {
+router.post('/templates', csrfProtect, (req, res) => {
   const tid = parseInt(req.body.template_id);
   if (tid >= 1 && tid <= 9) {
     getDb().prepare('UPDATE users SET template_id = ? WHERE id = ?').run(tid, req.session.userId);

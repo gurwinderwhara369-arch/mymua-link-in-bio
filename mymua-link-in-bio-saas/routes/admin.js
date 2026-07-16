@@ -85,13 +85,12 @@ router.post('/user/:id/content', csrfProtect, (req, res) => {
 
   const existing = db.prepare('SELECT data FROM user_content WHERE user_id = ?').get(user.id);
   let data = existing ? JSON.parse(existing.data) : {};
-  data.basic = data.basic || {};
   data.social = data.social || {};
 
-  data.basic.name = (req.body.name || '').trim();
-  data.basic.title = (req.body.title || '').trim();
-  data.basic.location = (req.body.location || '').trim();
-  data.basic.phone = (req.body.phone || '').trim();
+  data.name = (req.body.name || '').trim();
+  data.title = (req.body.title || '').trim();
+  data.location = (req.body.location || '').trim();
+  data.phone = (req.body.phone || '').trim();
   data.social.instagram = (req.body.instagram || '').trim();
   data.social.whatsapp = (req.body.whatsapp || '').trim();
   data.social.phone = (req.body.social_phone || '').trim();
