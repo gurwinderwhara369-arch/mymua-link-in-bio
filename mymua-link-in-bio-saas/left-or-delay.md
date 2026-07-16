@@ -13,6 +13,11 @@
   T6 uses `bride_name` instead of `name`.
   Booking form specs in read-this-also.md say all fields must be identical.
 
+- [ ] **Admin panel: user detail page reads wrong JSON path**
+  `views/admin/user.ejs` uses `content.name`, `content.title`, `content.location`.
+  But data is nested under `basic: {}` — should be `content.basic?.name`, `content.basic?.title`, `content.basic?.location`.
+  Shows `—` for every user's name/title/location.
+
 ## MEDIUM PRIORITY
 
 - [ ] **Change DOMAIN from localhost to mymua.in in .env**
@@ -26,6 +31,15 @@
 - [ ] **Database backup cron job**
   SQLite is a single file — if it corrupts, all user data is gone.
   Add daily cron: `cp data/database.sqlite backups/$(date +%F).sqlite`
+
+- [ ] **Admin panel: missing features**
+  No way to edit user content from admin (read-only).
+  No way to reset user passwords.
+  No way to delete users.
+  No search/filter in user list.
+  No pagination for large user bases.
+  No booking status management (confirm/cancel).
+  No rate limiting on admin routes.
 
 - [ ] **www.mymua.in still points to old cPanel site**
   A record `147.93.29.55` (DNS only) — visitors on www see old site.
