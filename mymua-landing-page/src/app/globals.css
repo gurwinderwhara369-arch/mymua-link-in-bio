@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FCF9F5;
+  --color-cream-dark: #F8F3EE;
+  --color-near-black: #1A1A1A;
+  --color-warm-gray: #8C8C8C;
+  --color-warm-gray-light: #B8B8B8;
+  --color-rose: #C4737A;
+  --color-rose-light: #E8B4B8;
+  --color-gold: #C9A96E;
+  --color-gold-light: #E5D3A8;
+  --color-card: #FFFFFF;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --text-hero: clamp(2.5rem, 5vw, 4.5rem);
+  --text-section: clamp(1.75rem, 3vw, 2.625rem);
+  --text-subsection: clamp(1.25rem, 2vw, 1.75rem);
+  --text-body: clamp(0.9375rem, 1.1vw, 1.125rem);
+  --text-small: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  --text-micro: clamp(0.6875rem, 0.75vw, 0.8125rem);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-cream);
+    color: var(--color-near-black);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-rose-light);
+    color: var(--color-near-black);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .radial-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(196, 115, 122, 0.08), transparent);
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 24px rgba(26, 26, 26, 0.04), 0 1px 4px rgba(26, 26, 26, 0.02);
+  }
+
+  .card-shadow-hover {
+    box-shadow: 0 8px 40px rgba(26, 26, 26, 0.06), 0 2px 8px rgba(26, 26, 26, 0.03);
+  }
+
+  .ease-out-expo {
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .phone-frame {
+    position: relative;
+    border-radius: 40px;
+    box-shadow:
+      0 0 0 1px rgba(26, 26, 26, 0.06),
+      0 20px 60px rgba(26, 26, 26, 0.08),
+      0 8px 20px rgba(26, 26, 26, 0.04);
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    background: #1A1A1A;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
